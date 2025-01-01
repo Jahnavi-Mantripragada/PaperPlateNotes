@@ -4,8 +4,8 @@ import { auth, database, ref, set, push, onValue, signInAnonymously } from "./fi
 const plate = document.getElementById("plate");
 const addNoteBtn = document.getElementById("addNoteBtn");
 const messageInput = document.getElementById("message");
-const colorPicker = document.getElementById("colorPicker");
-const colorPickerLabel = document.querySelector(".color-picker-label");
+const notesColorPicker = document.getElementById("colorPicker");
+const notesColorPickerLabel = document.querySelector(".notes-color-picker-label");
 const musicInput = document.getElementById("music");
 const toggleFormBtn = document.getElementById("toggleFormBtn");
 const formContainer = document.getElementById("form-container");
@@ -14,7 +14,7 @@ const recipientSuggestions = document.getElementById("recipientSuggestions");
 const recipientsRef = ref(database, "recipients");
 const fontPicker = document.getElementById("fontPicker");
 const textColorPicker = document.getElementById("textColorPicker");
-
+const textColorPickerLabel = document.getElementById(".text-color-picker-label");
 
 onValue(recipientsRef, (snapshot) => {
   const recipients = snapshot.val();
@@ -90,9 +90,15 @@ recipientSuggestions.addEventListener("click", (event) => {
 
 
 // Update the circle color dynamically
-colorPicker.addEventListener("input", (e) => {
+notesColorPicker.addEventListener("input", (e) => {
   const selectedColor = e.target.value;
-  colorPickerLabel.style.backgroundColor = selectedColor;
+  notesColorPickerLabel.style.backgroundColor = selectedColor;
+});
+
+// Update text color dynamically
+textColorPicker.addEventListener("input", (e) => {
+  const selectedColor = e.textColorPicker.value;
+  textColorPickerLabel.style.backgroundColor = selectedColor;
 });
 
 // Toggle Form Visibility
@@ -114,7 +120,7 @@ formContainer.style.display = "none"; // Hide form on page load
 addNoteBtn.addEventListener("click", () => {
   const recipient = recipientSearch.value.trim();
   const message = messageInput.value.trim();
-  const color = colorPicker.value;
+  const color = notesColorPicker.value;
   const music = musicInput.value.trim();
   const font = fontPicker.value; // Get selected font
   const textColor = textColorPicker.value; // Get selected text color
@@ -145,7 +151,7 @@ addNoteBtn.addEventListener("click", () => {
     // Reset Form
     recipientSearch.value = "";
     messageInput.value = "";
-    colorPicker.value = "#000000";
+    notesColorPicker.value = "#000000";
     textColorPicker.value = "#ffffff";
     fontPicker.value = "'Arial', sans-serif";
     musicInput.value = "";

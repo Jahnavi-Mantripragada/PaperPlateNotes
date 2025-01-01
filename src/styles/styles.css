@@ -136,58 +136,35 @@ footer {
 .color-picker-container {
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin: 15px 0;
-  position: relative;
+  margin: 10px 0;
 }
 
-.color-picker-container label {
+.color-picker-label {
   cursor: pointer;
   width: 40px;
   height: 40px;
-  background-color: #000000; /* Default color */
+  background-color: #f5f5f5;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease-in-out;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
-.color-picker-container label:hover {
+.color-picker-label:hover {
   transform: scale(1.1);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.color-picker-container label i {
-  font-size: 20px;
-  color: white;
-}
-
-.color-picker-container {
-  text-align: center;
-  margin: 10px 0;
-}
-
-.color-picker-label i {
-  font-size: 24px;
-  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
 .color-helper-text {
-  font-size: 14px;
+  margin-left: 10px;
+  font-size: 12px;
   color: #555;
-  margin-top: 5px;
-  font-weight: 500;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
 }
 
-.color-helper-text i {
-  font-size: 16px;
-  color: #ff6f61;
+input[type="color"] {
+  display: none; /* Hide the actual color input */
 }
 
 button {
