@@ -12,6 +12,10 @@ const formContainer = document.getElementById("form-container");
 const recipientSearch = document.getElementById("recipientSearch");
 const recipientSuggestions = document.getElementById("recipientSuggestions");
 const recipientsRef = ref(database, "recipients");
+const fontPicker = document.getElementById("fontPicker");
+const textColorPicker = document.getElementById("textColorPicker");
+
+
 onValue(recipientsRef, (snapshot) => {
   const recipients = snapshot.val();
   const matches = recipients
@@ -112,6 +116,8 @@ addNoteBtn.addEventListener("click", () => {
   const message = messageInput.value.trim();
   const color = colorPicker.value;
   const music = musicInput.value.trim();
+  const font = fontPicker.value; // Get selected font
+  const textColor = textColorPicker.value; // Get selected text color
   
   if (!recipient || !message) {
     alert("Please fill out the recipient's name and write a note.");
@@ -130,6 +136,8 @@ addNoteBtn.addEventListener("click", () => {
       recipient,
       message,
       color,
+      font,
+      textColor,
       music: music || null,
       timestamp: Date.now(),
     });
@@ -138,6 +146,8 @@ addNoteBtn.addEventListener("click", () => {
     recipientSearch.value = "";
     messageInput.value = "";
     colorPicker.value = "#000000";
+    textColorPicker.value = "#ffffff";
+    fontPicker.value = "'Arial', sans-serif";
     musicInput.value = "";
     alert("Note added successfully!");
   } else {
@@ -191,6 +201,8 @@ document.addEventListener("DOMContentLoaded", () => {
           recipientElement.textContent = `To: ${note.recipient}`;
           const messageElement = document.createElement("p");
           messageElement.textContent = note.message;
+          messageElement.style.fontFamily = note.font || "'Arial', sans-serif";
+          messageElement.style.color = note.textColor || "#000000";
         
           noteElement.appendChild(recipientElement);
           noteElement.appendChild(messageElement);

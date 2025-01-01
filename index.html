@@ -34,7 +34,25 @@
         <p class="color-helper-text">
             Click the circle to pick a color for the notes background!
         </p>
-      </div>                    
+      </div>
+      <!-- Font Selector -->
+      <div>
+        <label for="fontPicker">Choose Font:</label>
+        <select id="fontPicker">
+          <option value="'Arial', sans-serif">Arial</option>
+          <option value="'Courier New', monospace">Courier New</option>
+          <option value="'Georgia', serif">Georgia</option>
+          <option value="'Times New Roman', serif">Times New Roman</option>
+          <option value="'Verdana', sans-serif">Verdana</option>
+        </select>
+      </div>
+
+      <!-- Text Color Picker -->
+      <div>
+        <label for="textColorPicker">Choose Text Color:</label>
+        <input type="color" id="textColorPicker" value="#000000">
+      </div>
+                    
       <input type="text" id="music" placeholder="Add a song link (optional, but highly recommended!)">
       <button id="addNoteBtn">Add Note</button>
     </div>
