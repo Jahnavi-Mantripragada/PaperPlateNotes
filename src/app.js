@@ -10,6 +10,66 @@ const colorPickerLabel = document.querySelector(".color-picker-label");
 const musicInput = document.getElementById("music");
 const toggleFormBtn = document.getElementById("toggleFormBtn");
 const formContainer = document.getElementById("form-container");
+const recipientSearch = document.getElementById("recipientSearch");
+const recipientSuggestions = document.getElementById("recipientSuggestions");
+
+recipientSearch.addEventListener("input", async (event) => {
+  const query = event.target.value.trim().toLowerCase();
+
+  if (!query) {
+    recipientSuggestions.style.display = "none"; // Hide suggestions if query is empty
+    return;
+  }
+
+  // Query Firebase for recipient names
+  const recipientsRef = ref(database, "recipients"); // Assuming recipients are stored here
+  onValue(recipientsRef, (snapshot) => {
+    const recipients = snapshot.val();
+
+    // Filter recipients based on the query
+    const matches = recipients
+      ? Object.values(recipients).filter((name) =>
+          name.toLowerCase().includes(query)
+        )
+      : [];
+
+    // Populate suggestions
+    recipientSuggestions.innerHTML = ""; // Clear previous suggestions
+    if (matches.length > 0) {
+      matches.forEach((name) => {
+        const li = document.createElement("li");
+        li.textContent = name;
+        li.addEventListener("click", () => {
+          recipientSearch.value = name; // Set the selected name
+          recipientSuggestions.style.display = "none"; // Hide suggestions
+        });
+        recipientSuggestions.appendChild(li);
+      });
+      recipientSuggestions.style.display = "block"; // Show suggestions
+    } else {
+      // No matches found
+      recipientSuggestions.innerHTML = `<li>No matches found. Would you like to add "${query}"?</li>`;
+      recipientSuggestions.style.display = "block";
+    }
+  });
+});
+
+recipientSuggestions.addEventListener("click", (event) => {
+  const selectedText = event.target.textContent;
+
+  if (selectedText.startsWith("No matches found")) {
+    const newRecipient = recipientSearch.value.trim();
+    if (newRecipient) {
+      // Add the new recipient to Firebase
+      const recipientsRef = ref(database, "recipients");
+      push(recipientsRef, newRecipient);
+
+      alert(`"${newRecipient}" has been added to the recipient list.`);
+      recipientSuggestions.style.display = "none"; // Hide suggestions
+    }
+  }
+});
+
 
 // Update the circle color dynamically
 colorPicker.addEventListener("input", (e) => {

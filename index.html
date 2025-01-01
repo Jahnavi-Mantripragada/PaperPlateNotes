@@ -17,7 +17,14 @@
   <main>
     <button id="toggleFormBtn">Add a Note</button>
     <div id="form-container" class="collapsed">
-      <input type="text" id="recipient" placeholder="Recipient's Name">
+      <label for="recipient">Recipient's Name:</label>
+      <input
+        type="text"
+        id="recipientSearch"
+        placeholder="Type to search for a recipient"
+        autocomplete="off"
+      />
+      <ul id="recipientSuggestions" style="display: none;"></ul>
       <textarea id="message" placeholder="Write your note"></textarea>
       <div class="color-picker-container">
         <label for="colorPicker" class="color-picker-label">

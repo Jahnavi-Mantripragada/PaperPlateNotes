@@ -241,3 +241,25 @@ button:hover {
   padding: 10px;
   border-radius: 8px; /* Optional: smooth corners */
 }
+
+#recipientSuggestions {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  background: white;
+  border: 1px solid #ccc;
+  max-height: 150px;
+  overflow-y: auto;
+  position: absolute;
+  z-index: 1000;
+  width: 100%;
+}
+
+#recipientSuggestions li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+#recipientSuggestions li:hover {
+  background-color: #f0f0f0;
+}
