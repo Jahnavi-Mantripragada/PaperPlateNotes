@@ -3,7 +3,6 @@ import { auth, database, ref, set, push, onValue, signInAnonymously } from "./fi
 // DOM Elements
 const plate = document.getElementById("plate");
 const addNoteBtn = document.getElementById("addNoteBtn");
-const recipientInput = document.getElementById("recipient");
 const messageInput = document.getElementById("message");
 const colorPicker = document.getElementById("colorPicker");
 const colorPickerLabel = document.querySelector(".color-picker-label");
@@ -12,6 +11,21 @@ const toggleFormBtn = document.getElementById("toggleFormBtn");
 const formContainer = document.getElementById("form-container");
 const recipientSearch = document.getElementById("recipientSearch");
 const recipientSuggestions = document.getElementById("recipientSuggestions");
+const recipientsRef = ref(database, "recipients");
+onValue(recipientsRef, (snapshot) => {
+  const recipients = snapshot.val();
+  const matches = recipients
+    ? Object.values(recipients).filter((name) =>
+        name.toLowerCase().includes(query)
+      )
+    : [];
+  console.log("Matching recipients:", matches);
+});
+
+onValue(recipientsRef, (snapshot) => {
+  const recipients = snapshot.val();
+  console.log("All recipients:", recipients);
+});
 
 recipientSearch.addEventListener("input", async (event) => {
   const query = event.target.value.trim().toLowerCase();
@@ -94,7 +108,7 @@ formContainer.style.display = "none"; // Hide form on page load
 
 // Add a Note
 addNoteBtn.addEventListener("click", () => {
-  const recipient = recipientInput.value.trim();
+  const recipient = recipientSearch.value.trim();
   const message = messageInput.value.trim();
   const color = colorPicker.value;
   const music = musicInput.value.trim();
@@ -121,7 +135,7 @@ addNoteBtn.addEventListener("click", () => {
     });
 
     // Reset Form
-    recipientInput.value = "";
+    recipientSearch.value = "";
     messageInput.value = "";
     colorPicker.value = "#000000";
     musicInput.value = "";
@@ -132,7 +146,7 @@ addNoteBtn.addEventListener("click", () => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("Current DOM:", document.body.innerHTML); // Log DOM structure
+  //console.log("Current DOM:", document.body.innerHTML); // Log DOM structure
   const spinner = document.getElementById("loadingSpinner");
 
     // Verify spinner existence
@@ -141,11 +155,11 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    console.log("Loading spinner found in the DOM.");
+    //console.log("Loading spinner found in the DOM.");
 
     // Show spinner when starting a process
     function showSpinner() {
-        console.log("Showing spinner");
+        //console.log("Showing spinner");
         spinner.style.display = "block";
     }
     // Hide spinner when the process completes
