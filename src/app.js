@@ -92,19 +92,33 @@ recipientSuggestions.addEventListener("click", (event) => {
   }
 });
 
+recipientSearch.addEventListener("input", (e) => {
+  const recipientName = e.target.value.trim();
+  previewRecipient.textContent = recipientName || "Recipient's Name";
+});
+
+messageInput.addEventListener("input", (e) => {
+  const message = e.target.value.trim();
+  previewMessage.textContent = message || "Your message will appear here.";
+});
+
+fontPicker.addEventListener("change", (e) => {
+  const selectedFont = e.target.value;
+  previewNote.style.fontFamily = selectedFont;
+});
 
 // Update the circle color dynamically
 notesColorPicker.addEventListener("input", (e) => {
   const selectedColor = e.target.value;
-  console.log("Notes Color Picker Label:", notesColorPickerLabel);
   notesColorPickerLabel.style.backgroundColor = selectedColor;
+  previewNote.style.backgroundColor = selectedColor;
 });
 
 // Update text color dynamically
 textColorPicker.addEventListener("input", (e) => {
   const selectedColor = e.target.value;
-  console.log("Text Color Picker Label:", textColorPickerLabel);
   textColorPickerLabel.style.backgroundColor = selectedColor;
+  previewNote.style.color = selectedColor;
 });
 
 // Toggle Form Visibility
@@ -161,6 +175,15 @@ addNoteBtn.addEventListener("click", () => {
     textColorPicker.value = "#ffffff";
     fontPicker.value = "'Arial', sans-serif";
     musicInput.value = "";
+
+     // Reset preview
+    previewNote.style.backgroundColor = "#000000";
+    previewNote.style.color = "#ffffff";
+    previewNote.style.fontFamily = "Arial";
+    previewRecipient.textContent = "Recipient's Name";
+    previewMessage.textContent = "Your message will appear here.";
+
+
     alert("Note added successfully!");
   } else {
     alert("Please fill out the recipient's name and note message.");

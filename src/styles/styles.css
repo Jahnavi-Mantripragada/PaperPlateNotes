@@ -240,3 +240,24 @@ button:hover {
 #recipientSuggestions li:hover {
   background-color: #f0f0f0;
 }
+
+.note-preview {
+  padding: 20px;
+  margin: 20px 0;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #ffefc1; /* Default note background */
+  color: #000; /* Default text color */
+  text-align: center;
+  font-family: Arial, sans-serif; /* Default font */
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.preview-recipient {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.preview-message {
+  font-size: 16px;
+}
