@@ -4,8 +4,10 @@ import { auth, database, ref, set, push, onValue, signInAnonymously } from "./fi
 const plate = document.getElementById("plate");
 const addNoteBtn = document.getElementById("addNoteBtn");
 const messageInput = document.getElementById("message");
-const notesColorPicker = document.getElementById("colorPicker");
-const notesColorPickerLabel = document.querySelector(".notes-color-picker-label");
+const notesColorPicker = document.getElementById("notesColorPicker");
+const notesColorPickerLabel = document.querySelector(
+  'label[for="notesColorPicker"]'
+);
 const musicInput = document.getElementById("music");
 const toggleFormBtn = document.getElementById("toggleFormBtn");
 const formContainer = document.getElementById("form-container");
@@ -14,7 +16,9 @@ const recipientSuggestions = document.getElementById("recipientSuggestions");
 const recipientsRef = ref(database, "recipients");
 const fontPicker = document.getElementById("fontPicker");
 const textColorPicker = document.getElementById("textColorPicker");
-const textColorPickerLabel = document.getElementById(".text-color-picker-label");
+const textColorPickerLabel = document.querySelector(
+  'label[for="textColorPicker"]'
+);
 
 onValue(recipientsRef, (snapshot) => {
   const recipients = snapshot.val();
@@ -92,12 +96,14 @@ recipientSuggestions.addEventListener("click", (event) => {
 // Update the circle color dynamically
 notesColorPicker.addEventListener("input", (e) => {
   const selectedColor = e.target.value;
+  console.log("Notes Color Picker Label:", notesColorPickerLabel);
   notesColorPickerLabel.style.backgroundColor = selectedColor;
 });
 
 // Update text color dynamically
 textColorPicker.addEventListener("input", (e) => {
-  const selectedColor = e.textColorPicker.value;
+  const selectedColor = e.target.value;
+  console.log("Text Color Picker Label:", textColorPickerLabel);
   textColorPickerLabel.style.backgroundColor = selectedColor;
 });
 
