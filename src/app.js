@@ -49,6 +49,14 @@ googleSignInBtn.addEventListener("click", () => {
     });
 });
 
+const fontSizePicker = document.getElementById("fontSizePicker");
+
+// Update font size dynamically
+fontSizePicker.addEventListener("change", (e) => {
+  const selectedFontSize = e.target.value;
+  previewMessage.style.fontSize = selectedFontSize;
+});
+
 const urlParams = new URLSearchParams(window.location.search);
 const recipientUid = urlParams.get("uid");
 
@@ -209,6 +217,7 @@ addNoteBtn.addEventListener("click", () => {
   const music = musicInput.value.trim();
   const font = fontPicker.value; // Get selected font
   const textColor = textColorPicker.value; // Get selected text color
+  const fontSize = fontSizePicker.value;
   
   if (!recipient || !message) {
     alert("Please fill out the recipient's name and write a note.");
@@ -228,6 +237,7 @@ addNoteBtn.addEventListener("click", () => {
       message,
       color,
       font,
+      fontSize,
       textColor,
       music: music || null,
       timestamp: Date.now(),
@@ -239,12 +249,14 @@ addNoteBtn.addEventListener("click", () => {
     notesColorPicker.value = "#000000";
     textColorPicker.value = "#ffffff";
     fontPicker.value = "'Arial', sans-serif";
+    fontSizePicker.value = "16px";
     musicInput.value = "";
 
      // Reset preview
     previewNote.style.backgroundColor = "#000000";
     previewNote.style.color = "#ffffff";
     previewNote.style.fontFamily = "Arial";
+    previewNote.style.fontSize = "16px";
     previewRecipient.textContent = "Recipient's Name";
     previewMessage.textContent = "Your message will appear here.";
 
@@ -329,6 +341,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const messageElement = document.createElement("p");
             messageElement.textContent = note.message;
             messageElement.style.fontFamily = note.font || "'Arial', sans-serif";
+            messageElement.style.fontSize = note.fontSize || "16px";
             messageElement.style.color = note.textColor || "#000000";
     
             noteElement.appendChild(recipientElement);

@@ -58,6 +58,7 @@
           Click the eyedropper to pick a color for the text!
         </p>
       </div>
+      <div class="picker-container">
       <label for="fontPicker">Choose Font:</label>
       <select id="fontPicker">
         <option value="Arial" style="font-family: Arial;">Arial</option>
@@ -66,7 +67,15 @@
         <option value="'Pacifico', cursive" style="font-family: 'Pacifico', cursive;">Pacifico</option>
         <option value="'Great Vibes', cursive" style="font-family: 'Great Vibes', cursive;">Great Vibes</option>
         <option value="Georgia" style="font-family: Georgia;">Georgia</option>
-      </select>    
+      </select>
+      </div>  
+      <label for="fontSizePicker" class="picker-label">Font Size:</label>
+      <select id="fontSizePicker">
+        <option value="12px">Small</option>
+        <option value="16px" selected>Medium</option>
+        <option value="20px">Large</option>
+        <option value="24px">Extra Large</option>
+      </select>        
       <input type="text" id="music" placeholder="Add a song link (optional, but highly recommended!)">
       <button id="addNoteBtn">Add Note</button>
     </div>
