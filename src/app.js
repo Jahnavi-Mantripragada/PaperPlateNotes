@@ -11,6 +11,7 @@ const notesColorPickerLabel = document.querySelector(
 const musicInput = document.getElementById("music");
 const toggleFormBtn = document.getElementById("toggleFormBtn");
 const formContainer = document.getElementById("form-container");
+const previewNote = document.getElementById("previewNote");
 const recipientSearch = document.getElementById("recipientSearch");
 const recipientSuggestions = document.getElementById("recipientSuggestions");
 const recipientsRef = ref(database, "recipients");
@@ -125,15 +126,18 @@ textColorPicker.addEventListener("input", (e) => {
 toggleFormBtn.addEventListener("click", () => {
   if (formContainer.style.display === "none" || !formContainer.style.display) {
     formContainer.style.display = "block";
+    previewNote.style.display = "block";
     toggleFormBtn.innerText = "Hide Form";
   } else {
     formContainer.style.display = "none";
+    previewNote.style.display = "none";
     toggleFormBtn.innerText = "Add a Note";
   }
 });
 
 // Initialize form to be visible
 formContainer.style.display = "none"; // Hide form on page load
+previewNote.style.display = "none"; // Hide preview on page load
 
 
 // Add a Note
