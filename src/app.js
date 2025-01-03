@@ -126,6 +126,8 @@ function updateUIAfterLogin(user) {
   document.getElementById("shareLinkContainer").style.display = "block";
   shareLinkInput.value = shareLink;
   document.getElementById("loginPrompt").style.display = "none";
+  const logoutBtn = document.getElementById("logoutBtn");
+  logoutBtn.style.display = "block"; // Show the logout button
   const copyLinkBtn = document.getElementById("copyLinkBtn");
 
   copyLinkBtn.addEventListener("click", () => {
@@ -149,6 +151,43 @@ function updateUIAfterLogin(user) {
     }
   });
 }
+
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  auth.signOut()
+    .then(() => {
+      console.log("User logged out successfully.");
+      updateUIForAnonymousUser();
+    })
+    .catch((error) => {
+      console.error("Logout error:", error.message);
+    });
+});
+
+/**
+ * This block is to remove logins
+ */
+
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  const user = auth.currentUser;
+  if (user) {
+    const userRef = ref(database, `recipients/${user.uid}`);
+    set(userRef, null) // Clear user data
+      .then(() => {
+        console.log("User data removed from Firebase.");
+        return auth.signOut();
+      })
+      .then(() => {
+        console.log("User logged out successfully.");
+        updateUIForLoggedOutUser();
+      })
+      .catch((error) => {
+        console.error("Logout or cleanup error:", error.message);
+      });
+  } else {
+    console.warn("No user currently logged in.");
+  }
+});
+
 
 /**
  * Updates the UI for anonymous users.
