@@ -197,62 +197,6 @@ function updateUIForAnonymousUser() {
   document.getElementById("shareLinkContainer").style.display = "none";
 }
 
-// /**
-//  * Handles dynamic recipient search and suggestions.
-//  * - Filters recipient names from Firebase.
-//  * - Updates the suggestions dropdown.
-//  */
-// recipientSearch.addEventListener(
-//   "input",
-//   debounce((event) => {
-//     const query = event.target.value.trim().toLowerCase();
-//     recipientSuggestions.innerHTML = ""; // Clear previous suggestions
-
-//     if (!query) {
-//       recipientSuggestions.style.display = "none";
-//       return;
-//     }
-
-//     // Query Firebase for recipients
-//     showSpinner();
-//     onValue(
-//       recipientsRef,
-//       (snapshot) => {
-//         const recipients = snapshot.val();
-//         const matches = recipients
-//           ? Object.entries(recipients).filter(([uid, recipient]) =>
-//               recipient.name.toLowerCase().includes(query)
-//             )
-//           : [];
-
-//         // Populate suggestions
-//         if (matches.length > 0) {
-//           matches.forEach(([uid, recipient]) => {
-//             const li = document.createElement("li");
-//             li.textContent = recipient.name;
-//             li.dataset.uid = uid; // Store UID in the list item
-//             li.addEventListener("click", () => {
-//               recipientSearch.value = recipient.name; // Set name in input
-//               recipientSearch.dataset.selectedUid = uid; // Store selected UID
-//               recipientSuggestions.style.display = "none"; // Hide dropdown
-//             });
-//             recipientSuggestions.appendChild(li);
-//           });
-//           recipientSuggestions.style.display = "block";
-//         } else {
-//           recipientSuggestions.innerHTML = `<li>No matches found for "${query}". Click to add as new recipient.</li>`;
-//           recipientSuggestions.style.display = "block";
-//         }
-//         hideSpinner();
-//       },
-//       (error) => {
-//         console.error("Error fetching recipients:", error);
-//         hideSpinner();
-//       }
-//     );
-//   }, 300)
-// );
-
 /**
  * Allows users to add a new recipient if no match is found.
  * Updates Firebase dynamically and notifies the user.
@@ -322,6 +266,11 @@ addNoteBtn.addEventListener("click", () => {
   }
 
   const notesRef = ref(database, `notes/${recipient}`);
+  
+  console.log("Recipient UID:", recipient); // Should match the UID of the logged-in user
+  console.log("Authenticated User UID:", auth.currentUser?.uid); // Ensure this matches the path being accessed
+  console.log("Firebase Path:", `notes/${recipient}`);
+
   push(notesRef, {
     recipient,
     message,
@@ -494,14 +443,15 @@ fontSizePicker.addEventListener("change", (e) => {
  * @param {string} userId - The unique ID of the logged-in user.
  */
 function showNotesUI(userId) {
-  showSpinner(); // Show the loading spinner during data fetch
+  showSpinner(); // Display loading spinner while fetching notes
+  console.log("Fetching notes for recipient UID:", userId);
   const userNotesRef = ref(database, `notes/${userId}`);
-
+  
   onValue(
     userNotesRef,
     (snapshot) => {
       const notes = snapshot.val();
-      plate.innerHTML = ""; // Clear previous notes
+      console.log("Fetched notes:", notes);
 
       if (notes) {
         const fragment = document.createDocumentFragment();
@@ -538,7 +488,8 @@ function showNotesUI(userId) {
           fragment.appendChild(noteElement);
         });
 
-        plate.appendChild(fragment); // Append all notes to the plate
+        plate.innerHTML = ""; // Clear previous notes
+        plate.appendChild(fragment); // Append new notes
       } else {
         plate.innerHTML = "<p>No notes found. Share your link to get notes!</p>";
       }
@@ -551,6 +502,7 @@ function showNotesUI(userId) {
     }
   );
 }
+
 
 /**
  * Displays the loading spinner.
