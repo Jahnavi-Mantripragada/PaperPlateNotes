@@ -9,7 +9,6 @@ import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 // DOM Elements
 const plate = document.getElementById("plate");
-const addNoteBtn = document.getElementById("addNoteBtn");
 const messageInput = document.getElementById("message");
 const notesColorPicker = document.getElementById("notesColorPicker");
 const notesColorPickerLabel = document.querySelector('label[for="notesColorPicker"]');
@@ -17,13 +16,10 @@ const musicInput = document.getElementById("music");
 const toggleFormBtn = document.getElementById("toggleFormBtn");
 const formContainer = document.getElementById("form-container");
 const previewNote = document.getElementById("previewNote");
-const recipientSearch = document.getElementById("recipientSearch");
-const recipientSuggestions = document.getElementById("recipientSuggestions");
 const recipientsRef = ref(database, "recipients");
 const fontPicker = document.getElementById("fontPicker");
 const textColorPicker = document.getElementById("textColorPicker");
 const textColorPickerLabel = document.querySelector('label[for="textColorPicker"]');
-const googleSignInBtn = document.getElementById("googleSignInBtn");
 const fontSizePicker = document.getElementById("fontSizePicker");
 const loadingSpinner = document.getElementById("loadingSpinner");
 
@@ -35,27 +31,35 @@ const provider = new GoogleAuthProvider();
  * - Authenticates the user via Google.
  * - Saves user profile details in Firebase.
  */
-googleSignInBtn.addEventListener("click", () => {
-  signInWithPopup(auth, provider)
-    .then((result) => {
-      const user = result.user;
-      console.log("User signed in with Google:", user.displayName);
+document.addEventListener("DOMContentLoaded", () => {
+  const googleSignInBtn = document.getElementById("googleSignInBtn");
+  
+  if (googleSignInBtn) {
+    googleSignInBtn.addEventListener("click", () => {
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          const user = result.user;
+          console.log("User signed in with Google:", user.displayName);
 
-      // Save user profile in Firebase
-      const userId = user.uid;
-      const recipientRef = ref(database, `recipients/${userId}`);
-      set(recipientRef, {
-        name: user.displayName,
-        email: user.email,
-      });
+          // Save user profile in Firebase
+          const userId = user.uid;
+          const recipientRef = ref(database, `recipients/${userId}`);
+          set(recipientRef, {
+            name: user.displayName,
+            email: user.email,
+          });
 
-      alert(`Welcome, ${user.displayName}!`);
-      updateUIAfterLogin(user); // Update the UI without reloading the page
-    })
-    .catch((error) => {
-      console.error("Google Sign-In Error:", error.message);
-      alert("Failed to sign in with Google. Please try again.");
+          alert(`Welcome, ${user.displayName}!`);
+          updateUIAfterLogin(user);
+        })
+        .catch((error) => {
+          console.error("Google Sign-In Error:", error.message);
+          alert("Failed to sign in with Google. Please try again.");
+        });
     });
+  } else {
+    console.warn("googleSignInBtn not found in DOM.");
+  }
 });
 
 auth.onAuthStateChanged((user) => {
@@ -123,67 +127,69 @@ function updateUIForAnonymousUser() {
   document.getElementById("shareLinkContainer").style.display = "none";
 }
 
-/**
- * Handles dynamic recipient search and suggestions.
- * - Filters recipient names from Firebase.
- * - Updates the suggestions dropdown.
- */
-recipientSearch.addEventListener(
-  "input",
-  debounce((event) => {
-    const query = event.target.value.trim().toLowerCase();
-    recipientSuggestions.innerHTML = ""; // Clear previous suggestions
+// /**
+//  * Handles dynamic recipient search and suggestions.
+//  * - Filters recipient names from Firebase.
+//  * - Updates the suggestions dropdown.
+//  */
+// recipientSearch.addEventListener(
+//   "input",
+//   debounce((event) => {
+//     const query = event.target.value.trim().toLowerCase();
+//     recipientSuggestions.innerHTML = ""; // Clear previous suggestions
 
-    if (!query) {
-      recipientSuggestions.style.display = "none";
-      return;
-    }
+//     if (!query) {
+//       recipientSuggestions.style.display = "none";
+//       return;
+//     }
 
-    // Query Firebase for recipients
-    showSpinner();
-    onValue(
-      recipientsRef,
-      (snapshot) => {
-        const recipients = snapshot.val();
-        const matches = recipients
-          ? Object.entries(recipients).filter(([uid, recipient]) =>
-              recipient.name.toLowerCase().includes(query)
-            )
-          : [];
+//     // Query Firebase for recipients
+//     showSpinner();
+//     onValue(
+//       recipientsRef,
+//       (snapshot) => {
+//         const recipients = snapshot.val();
+//         const matches = recipients
+//           ? Object.entries(recipients).filter(([uid, recipient]) =>
+//               recipient.name.toLowerCase().includes(query)
+//             )
+//           : [];
 
-        // Populate suggestions
-        if (matches.length > 0) {
-          matches.forEach(([uid, recipient]) => {
-            const li = document.createElement("li");
-            li.textContent = recipient.name;
-            li.dataset.uid = uid; // Store UID in the list item
-            li.addEventListener("click", () => {
-              recipientSearch.value = recipient.name; // Set name in input
-              recipientSearch.dataset.selectedUid = uid; // Store selected UID
-              recipientSuggestions.style.display = "none"; // Hide dropdown
-            });
-            recipientSuggestions.appendChild(li);
-          });
-          recipientSuggestions.style.display = "block";
-        } else {
-          recipientSuggestions.innerHTML = `<li>No matches found for "${query}". Click to add as new recipient.</li>`;
-          recipientSuggestions.style.display = "block";
-        }
-        hideSpinner();
-      },
-      (error) => {
-        console.error("Error fetching recipients:", error);
-        hideSpinner();
-      }
-    );
-  }, 300)
-);
+//         // Populate suggestions
+//         if (matches.length > 0) {
+//           matches.forEach(([uid, recipient]) => {
+//             const li = document.createElement("li");
+//             li.textContent = recipient.name;
+//             li.dataset.uid = uid; // Store UID in the list item
+//             li.addEventListener("click", () => {
+//               recipientSearch.value = recipient.name; // Set name in input
+//               recipientSearch.dataset.selectedUid = uid; // Store selected UID
+//               recipientSuggestions.style.display = "none"; // Hide dropdown
+//             });
+//             recipientSuggestions.appendChild(li);
+//           });
+//           recipientSuggestions.style.display = "block";
+//         } else {
+//           recipientSuggestions.innerHTML = `<li>No matches found for "${query}". Click to add as new recipient.</li>`;
+//           recipientSuggestions.style.display = "block";
+//         }
+//         hideSpinner();
+//       },
+//       (error) => {
+//         console.error("Error fetching recipients:", error);
+//         hideSpinner();
+//       }
+//     );
+//   }, 300)
+// );
 
 /**
  * Allows users to add a new recipient if no match is found.
  * Updates Firebase dynamically and notifies the user.
  */
-recipientSuggestions.addEventListener("click", (event) => {
+document.addEventListener("DOMContentLoaded", () => {
+  const recipientSearch = document.getElementById("recipientSearch");
+  recipientSuggestions.addEventListener("click", (event) => {
   const selectedText = event.target.textContent;
 
   if (selectedText.startsWith("No matches found")) {
@@ -199,8 +205,8 @@ recipientSuggestions.addEventListener("click", (event) => {
         });
     }
   }
+  });
 });
-
 /**
  * Debounce Function
  * - Ensures Firebase queries are not triggered excessively.
@@ -222,6 +228,8 @@ function debounce(func, wait) {
  * - Saves the note to Firebase under the selected recipient's UID.
  * - Resets the form and preview on success.
  */
+document.addEventListener("DOMContentLoaded", () => {
+const addNoteBtn = document.getElementById("addNoteBtn");
 addNoteBtn.addEventListener("click", () => {
   const recipient = recipientSearch.dataset.selectedUid; // Get selected recipient UID
   const message = messageInput.value.trim();
@@ -261,6 +269,7 @@ addNoteBtn.addEventListener("click", () => {
     .catch((error) => {
       console.error("Error adding note:", error);
     });
+});
 });
 
 /**
@@ -307,43 +316,107 @@ function resetForm() {
  */
 
 // Recipient name input
-recipientSearch.addEventListener("input", (e) => {
-  const recipientName = e.target.value.trim();
-  previewRecipient.textContent = recipientName || "Recipient's Name";
+document.addEventListener("DOMContentLoaded", () => {
+  const recipientSearch = document.getElementById("recipientSearch");
+
+  if (recipientSearch) {
+    recipientSearch.addEventListener(
+      "input",
+      debounce((event) => {
+        const query = event.target.value.trim().toLowerCase();
+        recipientSuggestions.innerHTML = ""; // Clear previous suggestions
+
+        if (!query) {
+          recipientSuggestions.style.display = "none";
+          return;
+        }
+
+        // Query Firebase for recipients
+        showSpinner();
+        onValue(
+          recipientsRef,
+          (snapshot) => {
+            const recipients = snapshot.val();
+            const matches = recipients
+              ? Object.entries(recipients).filter(([uid, recipient]) =>
+                  recipient.name.toLowerCase().includes(query)
+                )
+              : [];
+
+            // Populate suggestions
+            if (matches.length > 0) {
+              matches.forEach(([uid, recipient]) => {
+                const li = document.createElement("li");
+                li.textContent = recipient.name;
+                li.dataset.uid = uid; // Store UID in the list item
+                li.addEventListener("click", () => {
+                  recipientSearch.value = recipient.name; // Set name in input
+                  recipientSearch.dataset.selectedUid = uid; // Store selected UID
+                  recipientSuggestions.style.display = "none"; // Hide dropdown
+                });
+                recipientSuggestions.appendChild(li);
+              });
+              recipientSuggestions.style.display = "block";
+            } else {
+              recipientSuggestions.innerHTML = `<li>No matches found for "${query}". Click to add as new recipient.</li>`;
+              recipientSuggestions.style.display = "block";
+            }
+            hideSpinner();
+          },
+          (error) => {
+            console.error("Error fetching recipients:", error);
+            hideSpinner();
+          }
+        );
+      }, 300)
+    );
+  } else {
+    console.warn("recipientSearch element not found in DOM.");
+  }
 });
 
+
 // Message content input
+document.addEventListener("DOMContentLoaded", () => {
 messageInput.addEventListener("input", (e) => {
   const message = e.target.value.trim();
   previewMessage.textContent = message || "Your message will appear here.";
 });
+});
 
 // Note background color picker
+document.addEventListener("DOMContentLoaded", () => {
 notesColorPicker.addEventListener("input", (e) => {
   const selectedColor = e.target.value;
   notesColorPickerLabel.style.backgroundColor = selectedColor;
   previewNote.style.backgroundColor = selectedColor;
 });
+});
 
 // Text color picker
+document.addEventListener("DOMContentLoaded", () => {
 textColorPicker.addEventListener("input", (e) => {
   const selectedColor = e.target.value;
   textColorPickerLabel.style.backgroundColor = selectedColor;
   previewNote.style.color = selectedColor;
 });
+});
 
 // Font picker
+document.addEventListener("DOMContentLoaded", () => {
 fontPicker.addEventListener("change", (e) => {
   const selectedFont = e.target.value;
   previewNote.style.fontFamily = selectedFont;
 });
+});
 
 // Font size picker
+document.addEventListener("DOMContentLoaded", () => {
 fontSizePicker.addEventListener("change", (e) => {
   const selectedFontSize = e.target.value;
   previewNote.style.fontSize = selectedFontSize;
 });
-
+});
 /**
  * Fetches and displays notes for the current user.
  * - Retrieves notes from Firebase based on the user's UID.
@@ -436,6 +509,7 @@ function hideSpinner() {
 /**
  * Toggles the visibility of the note submission form.
  */
+document.addEventListener("DOMContentLoaded", () => {
 toggleFormBtn.addEventListener("click", () => {
   if (formContainer.style.display === "none" || !formContainer.style.display) {
     formContainer.style.display = "block";
@@ -447,7 +521,10 @@ toggleFormBtn.addEventListener("click", () => {
     toggleFormBtn.innerText = "Add a Note";
   }
 });
+});
 
 // Initialize form visibility
+document.addEventListener("DOMContentLoaded", () => {
 formContainer.style.display = "none";
 previewNote.style.display = "none";
+});
