@@ -1,3 +1,9 @@
+/**
+ * app.js
+ * Core functionality for the Paper Plates app, including user authentication,
+ * note creation, recipient search, and UI updates.
+ */
+
 import { auth, database, ref, set, push, onValue, signInAnonymously } from "./firebase.js";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
@@ -6,9 +12,7 @@ const plate = document.getElementById("plate");
 const addNoteBtn = document.getElementById("addNoteBtn");
 const messageInput = document.getElementById("message");
 const notesColorPicker = document.getElementById("notesColorPicker");
-const notesColorPickerLabel = document.querySelector(
-  'label[for="notesColorPicker"]'
-);
+const notesColorPickerLabel = document.querySelector('label[for="notesColorPicker"]');
 const musicInput = document.getElementById("music");
 const toggleFormBtn = document.getElementById("toggleFormBtn");
 const formContainer = document.getElementById("form-container");
@@ -18,180 +22,420 @@ const recipientSuggestions = document.getElementById("recipientSuggestions");
 const recipientsRef = ref(database, "recipients");
 const fontPicker = document.getElementById("fontPicker");
 const textColorPicker = document.getElementById("textColorPicker");
-const textColorPickerLabel = document.querySelector(
-  'label[for="textColorPicker"]'
-);
-
+const textColorPickerLabel = document.querySelector('label[for="textColorPicker"]');
 const googleSignInBtn = document.getElementById("googleSignInBtn");
+const fontSizePicker = document.getElementById("fontSizePicker");
+const loadingSpinner = document.getElementById("loadingSpinner");
+
+// Firebase Google Sign-In Provider
 const provider = new GoogleAuthProvider();
 
+/**
+ * Google Sign-In Functionality
+ * - Authenticates the user via Google.
+ * - Saves user profile details in Firebase.
+ */
 googleSignInBtn.addEventListener("click", () => {
   signInWithPopup(auth, provider)
     .then((result) => {
       const user = result.user;
       console.log("User signed in with Google:", user.displayName);
 
-      // Save the user profile if logging in for the first time
+      // Save user profile in Firebase
       const userId = user.uid;
       const recipientRef = ref(database, `recipients/${userId}`);
       set(recipientRef, {
         name: user.displayName,
         email: user.email,
-        avatarUrl: user.photoURL,
       });
 
-      // Redirect to dashboard or refresh notes view
       alert(`Welcome, ${user.displayName}!`);
-      location.reload(); // Refresh to show "My Notes"
+      updateUIAfterLogin(user); // Update the UI without reloading the page
     })
     .catch((error) => {
       console.error("Google Sign-In Error:", error.message);
+      alert("Failed to sign in with Google. Please try again.");
     });
 });
 
-const fontSizePicker = document.getElementById("fontSizePicker");
+auth.onAuthStateChanged((user) => {
+  if (user) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const recipientUid = urlParams.get("uid");
 
-// Update font size dynamically
-fontSizePicker.addEventListener("change", (e) => {
-  const selectedFontSize = e.target.value;
-  previewMessage.style.fontSize = selectedFontSize;
+    if (recipientUid) {
+      // Pre-fill recipient name
+      onValue(ref(database, `recipients/${recipientUid}`), (snapshot) => {
+        const recipient = snapshot.val();
+        if (recipient) {
+          recipientSearch.value = recipient.name;
+          recipientSearch.dataset.selectedUid = recipientUid; // Store the UID
+          previewRecipient.textContent = recipient.name; // Update preview
+        }
+      });
+    }
+
+    if (user.isAnonymous) {
+      updateUIForAnonymousUser();
+    } else {
+      updateUIAfterLogin(user);
+      showNotesUI(user.uid);
+    }
+  } else {
+    enableAnonymousLogin();
+  }
 });
 
-const urlParams = new URLSearchParams(window.location.search);
-const recipientUid = urlParams.get("uid");
 
-if (recipientUid) {
-  console.log("Leaving a note for recipient UID:", recipientUid);
-  // Show the note submission form
-  document.getElementById("noteSubmissionForm").style.display = "block";
+/**
+ * Anonymous Login Functionality
+ * - Allows users to use the app without signing in.
+ */
+function enableAnonymousLogin() {
+  signInAnonymously(auth)
+    .then((userCredential) => {
+      const user = userCredential.user;
+      console.log("Anonymous user signed in:", user.uid);
+      updateUIForAnonymousUser(); // Update UI for anonymous users
+    })
+    .catch((error) => {
+      console.error("Anonymous sign-in error:", error.message);
+    });
+}
 
-  // Save the note under the recipient's UID
-  const submitNoteBtn = document.getElementById("submitNoteBtn");
-  submitNoteBtn.addEventListener("click", () => {
-    const message = document.getElementById("noteMessage").value.trim();
-    const color = document.getElementById("noteColor").value;
-    const textColor = document.getElementById("textColor").value;
+/**
+ * Updates the UI for logged-in users after Google Sign-In.
+ * @param {object} user - The authenticated user object.
+ */
+function updateUIAfterLogin(user) {
+  const shareLink = `${window.location.origin}?uid=${user.uid}`;
+  const shareLinkInput = document.getElementById("shareLink");
+  document.getElementById("shareLinkContainer").style.display = "block";
+  shareLinkInput.value = shareLink;
+  document.getElementById("loginPrompt").style.display = "none";
+}
 
-    if (!message) {
-      alert("Please write a message before submitting.");
+/**
+ * Updates the UI for anonymous users.
+ */
+function updateUIForAnonymousUser() {
+  document.getElementById("loginPrompt").style.display = "block";
+  document.getElementById("shareLinkContainer").style.display = "none";
+}
+
+/**
+ * Handles dynamic recipient search and suggestions.
+ * - Filters recipient names from Firebase.
+ * - Updates the suggestions dropdown.
+ */
+recipientSearch.addEventListener(
+  "input",
+  debounce((event) => {
+    const query = event.target.value.trim().toLowerCase();
+    recipientSuggestions.innerHTML = ""; // Clear previous suggestions
+
+    if (!query) {
+      recipientSuggestions.style.display = "none";
       return;
     }
 
-    const notesRef = ref(database, `notes/${recipientUid}`);
-    push(notesRef, {
-      message: message,
-      color: color,
-      textColor: textColor,
-      timestamp: Date.now(),
-    });
+    // Query Firebase for recipients
+    showSpinner();
+    onValue(
+      recipientsRef,
+      (snapshot) => {
+        const recipients = snapshot.val();
+        const matches = recipients
+          ? Object.entries(recipients).filter(([uid, recipient]) =>
+              recipient.name.toLowerCase().includes(query)
+            )
+          : [];
 
-    alert("Note submitted successfully!");
-    document.getElementById("noteSubmissionForm").reset();
-  });
-}
+        // Populate suggestions
+        if (matches.length > 0) {
+          matches.forEach(([uid, recipient]) => {
+            const li = document.createElement("li");
+            li.textContent = recipient.name;
+            li.dataset.uid = uid; // Store UID in the list item
+            li.addEventListener("click", () => {
+              recipientSearch.value = recipient.name; // Set name in input
+              recipientSearch.dataset.selectedUid = uid; // Store selected UID
+              recipientSuggestions.style.display = "none"; // Hide dropdown
+            });
+            recipientSuggestions.appendChild(li);
+          });
+          recipientSuggestions.style.display = "block";
+        } else {
+          recipientSuggestions.innerHTML = `<li>No matches found for "${query}". Click to add as new recipient.</li>`;
+          recipientSuggestions.style.display = "block";
+        }
+        hideSpinner();
+      },
+      (error) => {
+        console.error("Error fetching recipients:", error);
+        hideSpinner();
+      }
+    );
+  }, 300)
+);
 
-onValue(recipientsRef, (snapshot) => {
-  const recipients = snapshot.val();
-  const matches = recipients
-    ? Object.values(recipients).filter((name) =>
-        name.toLowerCase().includes(query)
-      )
-    : [];
-  console.log("Matching recipients:", matches);
-});
-
-onValue(recipientsRef, (snapshot) => {
-  const recipients = snapshot.val();
-  console.log("All recipients:", recipients);
-});
-
-recipientSearch.addEventListener("input", async (event) => {
-  const query = event.target.value.trim().toLowerCase();
-
-  if (!query) {
-    recipientSuggestions.style.display = "none"; // Hide suggestions if query is empty
-    return;
-  }
-
-  // Query Firebase for recipient names
-  const recipientsRef = ref(database, "recipients"); // Assuming recipients are stored here
-  onValue(recipientsRef, (snapshot) => {
-    const recipients = snapshot.val();
-
-    // Filter recipients based on the query
-    const matches = recipients
-      ? Object.values(recipients).filter((name) =>
-          name.toLowerCase().includes(query)
-        )
-      : [];
-
-    // Populate suggestions
-    recipientSuggestions.innerHTML = ""; // Clear previous suggestions
-    if (matches.length > 0) {
-      matches.forEach((name) => {
-        const li = document.createElement("li");
-        li.textContent = name;
-        li.addEventListener("click", () => {
-          recipientSearch.value = name; // Set the selected name
-          recipientSuggestions.style.display = "none"; // Hide suggestions
-        });
-        recipientSuggestions.appendChild(li);
-      });
-      recipientSuggestions.style.display = "block"; // Show suggestions
-    } else {
-      // No matches found
-      recipientSuggestions.innerHTML = `<li>No matches found. Would you like to add "${query}"?</li>`;
-      recipientSuggestions.style.display = "block";
-    }
-  });
-});
-
+/**
+ * Allows users to add a new recipient if no match is found.
+ * Updates Firebase dynamically and notifies the user.
+ */
 recipientSuggestions.addEventListener("click", (event) => {
   const selectedText = event.target.textContent;
 
   if (selectedText.startsWith("No matches found")) {
     const newRecipient = recipientSearch.value.trim();
     if (newRecipient) {
-      // Add the new recipient to Firebase
-      const recipientsRef = ref(database, "recipients");
-      push(recipientsRef, newRecipient);
-
-      alert(`"${newRecipient}" has been added to the recipient list.`);
-      recipientSuggestions.style.display = "none"; // Hide suggestions
+      push(recipientsRef, { name: newRecipient })
+        .then(() => {
+          alert(`"${newRecipient}" has been added to the recipient list.`);
+          recipientSuggestions.style.display = "none"; // Hide suggestions
+        })
+        .catch((error) => {
+          console.error("Error adding recipient:", error);
+        });
     }
   }
 });
 
+/**
+ * Debounce Function
+ * - Ensures Firebase queries are not triggered excessively.
+ * @param {function} func - The function to debounce.
+ * @param {number} wait - The debounce delay in milliseconds.
+ * @returns {function} - The debounced function.
+ */
+function debounce(func, wait) {
+  let timeout;
+  return function (...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, args), wait);
+  };
+}
+
+/**
+ * Handles note submission.
+ * - Validates input fields.
+ * - Saves the note to Firebase under the selected recipient's UID.
+ * - Resets the form and preview on success.
+ */
+addNoteBtn.addEventListener("click", () => {
+  const recipient = recipientSearch.dataset.selectedUid; // Get selected recipient UID
+  const message = messageInput.value.trim();
+  const color = notesColorPicker.value;
+  const music = musicInput.value.trim();
+  const font = fontPicker.value;
+  const textColor = textColorPicker.value;
+  const fontSize = fontSizePicker.value;
+
+  // Validate required fields
+  if (!recipient || !message) {
+    alert("Please select a recipient and write a note.");
+    return;
+  }
+
+  // Additional validation for music input (optional)
+  if (music && !isValidURL(music)) {
+    alert("Please enter a valid music URL.");
+    return;
+  }
+
+  const notesRef = ref(database, `notes/${recipient}`);
+  push(notesRef, {
+    recipient,
+    message,
+    color,
+    font,
+    fontSize,
+    textColor,
+    music: music || null,
+    timestamp: Date.now(),
+  })
+    .then(() => {
+      resetForm();
+      alert("Note added successfully!");
+    })
+    .catch((error) => {
+      console.error("Error adding note:", error);
+    });
+});
+
+/**
+ * Validates whether a given string is a valid URL.
+ * @param {string} url - The URL to validate.
+ * @returns {boolean} - True if the URL is valid, otherwise false.
+ */
+function isValidURL(url) {
+  const pattern = new RegExp(
+    "^(https?:\\/\\/)?" + // Protocol
+      "((([a-zA-Z0-9\\-]+\\.)+[a-zA-Z]{2,})|localhost)" + // Domain name or localhost
+      "(\\:\\d+)?(\\/.*)?$", // Port and path
+    "i"
+  );
+  return !!pattern.test(url);
+}
+
+/**
+ * Resets the form inputs and preview elements.
+ */
+function resetForm() {
+  recipientSearch.value = "";
+  delete recipientSearch.dataset.selectedUid; // Clear stored UID
+  messageInput.value = "";
+  notesColorPicker.value = "#000000";
+  textColorPicker.value = "#ffffff";
+  fontPicker.value = "'Arial', sans-serif";
+  fontSizePicker.value = "16px";
+  musicInput.value = "";
+
+  previewNote.style.backgroundColor = "#000000";
+  previewNote.style.color = "#ffffff";
+  previewNote.style.fontFamily = "Arial";
+  previewNote.style.fontSize = "16px";
+  previewRecipient.textContent = "Recipient's Name";
+  previewMessage.textContent = "Your message will appear here.";
+}
+
+/**
+ * Updates the preview dynamically based on user inputs.
+ * - Text content updates based on message and recipient inputs.
+ * - Colors update the note background and text.
+ * - Fonts update the note's style and size.
+ */
+
+// Recipient name input
 recipientSearch.addEventListener("input", (e) => {
   const recipientName = e.target.value.trim();
   previewRecipient.textContent = recipientName || "Recipient's Name";
 });
 
+// Message content input
 messageInput.addEventListener("input", (e) => {
   const message = e.target.value.trim();
   previewMessage.textContent = message || "Your message will appear here.";
 });
 
-fontPicker.addEventListener("change", (e) => {
-  const selectedFont = e.target.value;
-  previewNote.style.fontFamily = selectedFont;
-});
-
-// Update the circle color dynamically
+// Note background color picker
 notesColorPicker.addEventListener("input", (e) => {
   const selectedColor = e.target.value;
   notesColorPickerLabel.style.backgroundColor = selectedColor;
   previewNote.style.backgroundColor = selectedColor;
 });
 
-// Update text color dynamically
+// Text color picker
 textColorPicker.addEventListener("input", (e) => {
   const selectedColor = e.target.value;
   textColorPickerLabel.style.backgroundColor = selectedColor;
   previewNote.style.color = selectedColor;
 });
 
-// Toggle Form Visibility
+// Font picker
+fontPicker.addEventListener("change", (e) => {
+  const selectedFont = e.target.value;
+  previewNote.style.fontFamily = selectedFont;
+});
+
+// Font size picker
+fontSizePicker.addEventListener("change", (e) => {
+  const selectedFontSize = e.target.value;
+  previewNote.style.fontSize = selectedFontSize;
+});
+
+/**
+ * Fetches and displays notes for the current user.
+ * - Retrieves notes from Firebase based on the user's UID.
+ * - Dynamically updates the plate with the fetched notes.
+ * @param {string} userId - The unique ID of the logged-in user.
+ */
+function showNotesUI(userId) {
+  showSpinner(); // Show the loading spinner during data fetch
+  const userNotesRef = ref(database, `notes/${userId}`);
+
+  onValue(
+    userNotesRef,
+    (snapshot) => {
+      const notes = snapshot.val();
+      plate.innerHTML = ""; // Clear previous notes
+
+      if (notes) {
+        const fragment = document.createDocumentFragment();
+        Object.keys(notes).forEach((noteId) => {
+          const note = notes[noteId];
+
+          // Create note element
+          const noteElement = document.createElement("div");
+          noteElement.className = "note";
+          noteElement.style.backgroundColor = note.color;
+
+          // Add recipient
+          const recipientElement = document.createElement("p");
+          recipientElement.textContent = `To: ${note.recipient}`;
+          noteElement.appendChild(recipientElement);
+
+          // Add message
+          const messageElement = document.createElement("p");
+          messageElement.textContent = note.message;
+          messageElement.style.fontFamily = note.font || "'Arial', sans-serif";
+          messageElement.style.fontSize = note.fontSize || "16px";
+          messageElement.style.color = note.textColor || "#000000";
+          noteElement.appendChild(messageElement);
+
+          // Add music link if available
+          if (note.music) {
+            const musicButton = document.createElement("button");
+            musicButton.textContent = "▶ Play Song";
+            musicButton.className = "music-button";
+            musicButton.onclick = () => window.open(note.music, "_blank");
+            noteElement.appendChild(musicButton);
+          }
+
+          fragment.appendChild(noteElement);
+        });
+
+        plate.appendChild(fragment); // Append all notes to the plate
+      } else {
+        plate.innerHTML = "<p>No notes found. Share your link to get notes!</p>";
+      }
+
+      hideSpinner(); // Hide the spinner after data is loaded
+    },
+    (error) => {
+      console.error("Error fetching notes:", error);
+      hideSpinner();
+    }
+  );
+}
+
+/**
+ * Displays the loading spinner.
+ * Ensures users are informed about ongoing operations.
+ */
+function showSpinner() {
+  if (loadingSpinner) {
+    loadingSpinner.style.display = "block";
+  } else {
+    console.error("Loading spinner element not found in the DOM.");
+  }
+}
+
+/**
+ * Hides the loading spinner.
+ * Indicates the completion of operations.
+ */
+function hideSpinner() {
+  if (loadingSpinner) {
+    loadingSpinner.style.display = "none";
+  } else {
+    console.error("Loading spinner element not found in the DOM.");
+  }
+}
+
+/**
+ * Toggles the visibility of the note submission form.
+ */
 toggleFormBtn.addEventListener("click", () => {
   if (formContainer.style.display === "none" || !formContainer.style.display) {
     formContainer.style.display = "block";
@@ -204,157 +448,6 @@ toggleFormBtn.addEventListener("click", () => {
   }
 });
 
-// Initialize form to be visible
-formContainer.style.display = "none"; // Hide form on page load
-previewNote.style.display = "none"; // Hide preview on page load
-
-
-// Add a Note
-addNoteBtn.addEventListener("click", () => {
-  const recipient = recipientSearch.value.trim();
-  const message = messageInput.value.trim();
-  const color = notesColorPicker.value;
-  const music = musicInput.value.trim();
-  const font = fontPicker.value; // Get selected font
-  const textColor = textColorPicker.value; // Get selected text color
-  const fontSize = fontSizePicker.value;
-  
-  if (!recipient || !message) {
-    alert("Please fill out the recipient's name and write a note.");
-    return;
-  }
-
-  if (recipient && message) {
-    if (!music) {
-      const confirmNoMusic = confirm("Are you sure you don't want to add a song?");
-      if (!confirmNoMusic) return;
-    }
-
-    const userId = auth.currentUser.uid;
-    const notesRef = ref(database, `notes/${userId}`);
-    push(notesRef, {
-      recipient,
-      message,
-      color,
-      font,
-      fontSize,
-      textColor,
-      music: music || null,
-      timestamp: Date.now(),
-    });
-
-    // Reset Form
-    recipientSearch.value = "";
-    messageInput.value = "";
-    notesColorPicker.value = "#000000";
-    textColorPicker.value = "#ffffff";
-    fontPicker.value = "'Arial', sans-serif";
-    fontSizePicker.value = "16px";
-    musicInput.value = "";
-
-     // Reset preview
-    previewNote.style.backgroundColor = "#000000";
-    previewNote.style.color = "#ffffff";
-    previewNote.style.fontFamily = "Arial";
-    previewNote.style.fontSize = "16px";
-    previewRecipient.textContent = "Recipient's Name";
-    previewMessage.textContent = "Your message will appear here.";
-
-
-    alert("Note added successfully!");
-  } else {
-    alert("Please fill out the recipient's name and note message.");
-  }
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  //console.log("Current DOM:", document.body.innerHTML); // Log DOM structure
-  const spinner = document.getElementById("loadingSpinner");
-
-    // Verify spinner existence
-    if (!spinner) {
-        console.error("Loading spinner not found in the DOM.");
-        return;
-    }
-
-    //console.log("Loading spinner found in the DOM.");
-
-    // Show spinner when starting a process
-    function showSpinner() {
-        //console.log("Showing spinner");
-        spinner.style.display = "block";
-    }
-    // Hide spinner when the process completes
-    function hideSpinner() {
-        spinner.style.display = "none";
-    }
-
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        if (user.isAnonymous) {
-          console.log("Anonymous user detected.");
-          document.getElementById("loginPrompt").style.display = "block"; // Show login prompt
-          document.getElementById("plate").style.display = "none"; // Hide notes view
-        } else {
-          console.log("Logged-in user detected:", user.displayName);
-
-           // Generate the unique link
-          const shareLink = `https://your-app.com/notes?uid=${user.uid}`;
-          const shareLinkInput = document.getElementById("shareLink");
-
-          // Show the link container and set the link value
-          document.getElementById("shareLinkContainer").style.display = "block";
-          shareLinkInput.value = shareLink;
-
-          // Copy link functionality
-          document.getElementById("copyLinkBtn").addEventListener("click", () => {
-            shareLinkInput.select();
-            document.execCommand("copy");
-            alert("Link copied to clipboard!");
-          });
-
-          document.getElementById("loginPrompt").style.display = "none"; // Hide login prompt
-          showNotesUI(user.uid); // Fetch and display user's notes
-        }
-      } else {
-        console.log("No user detected.");
-      }
-    });
-    function showNotesUI(userId) {
-      showSpinner(); // Show loading spinner
-      const userNotesRef = ref(database, `notes/${userId}`);
-    
-      onValue(userNotesRef, (snapshot) => {
-        const notes = snapshot.val();
-        if (notes) {
-          const fragment = document.createDocumentFragment();
-          Object.keys(notes).forEach((noteId) => {
-            const note = notes[noteId];
-    
-            // Render note
-            const noteElement = document.createElement("div");
-            noteElement.className = "note";
-            noteElement.style.backgroundColor = note.color;
-    
-            const recipientElement = document.createElement("p");
-            recipientElement.textContent = `To: ${note.recipient}`;
-            const messageElement = document.createElement("p");
-            messageElement.textContent = note.message;
-            messageElement.style.fontFamily = note.font || "'Arial', sans-serif";
-            messageElement.style.fontSize = note.fontSize || "16px";
-            messageElement.style.color = note.textColor || "#000000";
-    
-            noteElement.appendChild(recipientElement);
-            noteElement.appendChild(messageElement);
-            fragment.appendChild(noteElement);
-          });
-          plate.innerHTML = ""; // Clear and append new notes
-          plate.appendChild(fragment);
-          hideSpinner(); // Hide loading spinner
-        } else {
-          hideSpinner(); // Hide loading spinner
-          plate.innerHTML = "<p>No notes found. Share your link to get notes!</p>";
-        }
-      });
-    } 
-});
+// Initialize form visibility
+formContainer.style.display = "none";
+previewNote.style.display = "none";
