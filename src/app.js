@@ -112,6 +112,7 @@ function enableAnonymousLogin() {
  * @param {object} user - The authenticated user object.
  */
 function updateUIAfterLogin(user) {
+  console.log("User signed in:", user.displayName);
   const shareLink = `${window.location.origin}?uid=${user.uid}`;
   const shareLinkInput = document.getElementById("shareLink");
   document.getElementById("shareLinkContainer").style.display = "block";
