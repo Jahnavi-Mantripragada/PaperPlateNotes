@@ -66,15 +66,23 @@ auth.onAuthStateChanged((user) => {
   if (user) {
     const urlParams = new URLSearchParams(window.location.search);
     const recipientUid = urlParams.get("uid");
-
+    console.log("Extracted UID from URL:", recipientUid);
     if (recipientUid) {
       // Pre-fill recipient name
-      onValue(ref(database, `recipients/${recipientUid}`), (snapshot) => {
+      // Fetch recipient details from Firebase
+      const recipientRef = ref(database, `recipients/${recipientUid}`);
+      onValue(recipientRef, (snapshot) => {
         const recipient = snapshot.val();
         if (recipient) {
+          console.log("Fetched recipient data:", recipient);
+
+          // Populate recipient name
+          const recipientSearch = document.getElementById("recipientSearch");
           recipientSearch.value = recipient.name;
-          recipientSearch.dataset.selectedUid = recipientUid; // Store the UID
-          previewRecipient.textContent = recipient.name; // Update preview
+          recipientSearch.dataset.selectedUid = recipientUid;
+          previewRecipient.textContent = recipient.name;
+        } else {
+          console.warn("Recipient not found in Firebase for UID:", recipientUid);
         }
       });
     }
@@ -118,6 +126,28 @@ function updateUIAfterLogin(user) {
   document.getElementById("shareLinkContainer").style.display = "block";
   shareLinkInput.value = shareLink;
   document.getElementById("loginPrompt").style.display = "none";
+  const copyLinkBtn = document.getElementById("copyLinkBtn");
+
+  copyLinkBtn.addEventListener("click", () => {
+    if (shareLinkInput) {
+      // Select the text in the input field
+      shareLinkInput.select();
+      shareLinkInput.setSelectionRange(0, 99999); // For mobile compatibility
+
+      // Copy the text to the clipboard
+      navigator.clipboard
+        .writeText(shareLinkInput.value)
+        .then(() => {
+          alert("Link copied to clipboard!");
+        })
+        .catch((err) => {
+          console.error("Failed to copy text: ", err);
+          alert("Failed to copy link. Please try again.");
+        });
+    } else {
+      console.error("Share link input field not found.");
+    }
+  });
 }
 
 /**
