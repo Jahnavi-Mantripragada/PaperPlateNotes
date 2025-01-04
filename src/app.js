@@ -10,18 +10,26 @@ import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 // DOM Elements
 const plate = document.getElementById("plate");
 const messageInput = document.getElementById("message");
-const notesColorPicker = document.getElementById("notesColorPicker");
-const notesColorPickerLabel = document.querySelector('label[for="notesColorPicker"]');
 const musicInput = document.getElementById("music");
 const toggleFormBtn = document.getElementById("toggleFormBtn");
 const formContainer = document.getElementById("form-container");
 const previewNote = document.getElementById("previewNote");
 const recipientsRef = ref(database, "recipients");
 const fontPicker = document.getElementById("fontPicker");
-const textColorPicker = document.getElementById("textColorPicker");
-const textColorPickerLabel = document.querySelector('label[for="textColorPicker"]');
 const fontSizePicker = document.getElementById("fontSizePicker");
 const loadingSpinner = document.getElementById("loadingSpinner");
+
+const bgRedSlider = document.getElementById("bgRedSlider");
+const bgGreenSlider = document.getElementById("bgGreenSlider");
+const bgBlueSlider = document.getElementById("bgBlueSlider");
+const notesColorPicker = document.getElementById("notesColorPicker");
+const notesColorPickerLabel = document.querySelector('label[for="notesColorPicker"]');
+
+const textRedSlider = document.getElementById("textRedSlider");
+const textGreenSlider = document.getElementById("textGreenSlider");
+const textBlueSlider = document.getElementById("textBlueSlider");
+const textColorPicker = document.getElementById("textColorPicker");
+const textColorPickerLabel = document.querySelector('label[for="textColorPicker"]');
 
 // Firebase Google Sign-In Provider
 const provider = new GoogleAuthProvider();
@@ -167,26 +175,26 @@ document.getElementById("logoutBtn").addEventListener("click", () => {
  * This block is to remove logins
  */
 
-document.getElementById("logoutBtn").addEventListener("click", () => {
-  const user = auth.currentUser;
-  if (user) {
-    const userRef = ref(database, `recipients/${user.uid}`);
-    set(userRef, null) // Clear user data
-      .then(() => {
-        console.log("User data removed from Firebase.");
-        return auth.signOut();
-      })
-      .then(() => {
-        console.log("User logged out successfully.");
-        updateUIForLoggedOutUser();
-      })
-      .catch((error) => {
-        console.error("Logout or cleanup error:", error.message);
-      });
-  } else {
-    console.warn("No user currently logged in.");
-  }
-});
+// document.getElementById("logoutBtn").addEventListener("click", () => {
+//   const user = auth.currentUser;
+//   if (user) {
+//     const userRef = ref(database, `recipients/${user.uid}`);
+//     set(userRef, null) // Clear user data
+//       .then(() => {
+//         console.log("User data removed from Firebase.");
+//         return auth.signOut();
+//       })
+//       .then(() => {
+//         console.log("User logged out successfully.");
+//         updateUIForLoggedOutUser();
+//       })
+//       .catch((error) => {
+//         console.error("Logout or cleanup error:", error.message);
+//       });
+//   } else {
+//     console.warn("No user currently logged in.");
+//   }
+// });
 
 
 /**
@@ -404,22 +412,49 @@ messageInput.addEventListener("input", (e) => {
 });
 
 // Note background color picker
+// Note background color picker with sliders
 document.addEventListener("DOMContentLoaded", () => {
-notesColorPicker.addEventListener("input", (e) => {
-  const selectedColor = e.target.value;
-  notesColorPickerLabel.style.backgroundColor = selectedColor;
-  previewNote.style.backgroundColor = selectedColor;
-});
+  const updateBackgroundColor = () => {
+    const red = bgRedSlider.value;
+    const green = bgGreenSlider.value;
+    const blue = bgBlueSlider.value;
+    const rgbColor = `rgb(${red}, ${green}, ${blue})`;
+
+    notesColorPickerLabel.style.backgroundColor = rgbColor;
+    previewNote.style.backgroundColor = rgbColor;
+    notesColorPicker.value = rgbColor; // Update hidden color picker value
+  };
+
+  bgRedSlider.addEventListener("input", updateBackgroundColor);
+  bgGreenSlider.addEventListener("input", updateBackgroundColor);
+  bgBlueSlider.addEventListener("input", updateBackgroundColor);
+
+  // Initialize background color
+  updateBackgroundColor();
 });
 
 // Text color picker
+// Text color picker with sliders
 document.addEventListener("DOMContentLoaded", () => {
-textColorPicker.addEventListener("input", (e) => {
-  const selectedColor = e.target.value;
-  textColorPickerLabel.style.backgroundColor = selectedColor;
-  previewNote.style.color = selectedColor;
+  const updateTextColor = () => {
+    const red = textRedSlider.value;
+    const green = textGreenSlider.value;
+    const blue = textBlueSlider.value;
+    const rgbColor = `rgb(${red}, ${green}, ${blue})`;
+
+    textColorPickerLabel.style.backgroundColor = rgbColor;
+    previewNote.style.color = rgbColor;
+    textColorPicker.value = rgbColor; // Update hidden color picker value
+  };
+
+  textRedSlider.addEventListener("input", updateTextColor);
+  textGreenSlider.addEventListener("input", updateTextColor);
+  textBlueSlider.addEventListener("input", updateTextColor);
+
+  // Initialize text color
+  updateTextColor();
 });
-});
+
 
 // Font picker
 document.addEventListener("DOMContentLoaded", () => {
