@@ -96,12 +96,15 @@
       </div>
 
       <input type="text" id="music" placeholder="Add a song link (optional, but highly recommended!)">
-      <button id="addNoteBtn">Add Note</button>
-    </div>
-    <div id="previewNote" class="note-preview">
-      <p id="previewRecipient" class="preview-recipient">Recipient's Name</p>
-      <p id="previewMessage" class="preview-message">Your message will appear here.</p>
-    </div>    
+      <div class="preview-container">
+        <button id="togglePreviewBtn" class="preview-btn">Click to Preview Your Note</button>
+        <div id="notePreview" class="note-preview" style="display: none;">
+          <p class="preview-recipient" id="previewRecipient">Recipient's Name</p>
+          <p class="preview-message" id="previewMessage">Your message will appear here.</p>
+        </div>
+      </div>
+      <button id="addNoteBtn" class="add-note-btn">Add Note</button>      
+    </div>   
     <section id="plate">  
       <div id="loadingSpinner" style="display: none; text-align: center; margin: 20px;">
         <img src="/assets/Dual Ring@1x-1.0s-200px-200px.gif" alt="Loading..." style="width: 50px; height: 50px;">
@@ -109,7 +112,7 @@
     </section>
   </main>
   <footer>
-    <p>&copy; 2025 Paper Plates</p>
+    <p>&copy; 2025 Paper Plates. Made with Love 💚</p>
   </footer>
   <script type="module" src="./src/main.js"></script>
   <script type="module" src="./src/app.js"></script>

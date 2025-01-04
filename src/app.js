@@ -469,21 +469,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-// Font picker
-document.addEventListener("DOMContentLoaded", () => {
-fontPicker.addEventListener("change", (e) => {
-  const selectedFont = e.target.value;
-  previewNote.style.fontFamily = selectedFont;
-});
-});
 
-// Font size picker
-document.addEventListener("DOMContentLoaded", () => {
-fontSizePicker.addEventListener("change", (e) => {
-  const selectedFontSize = e.target.value;
-  previewNote.style.fontSize = selectedFontSize;
-});
-});
+
 /**
  * Fetches and displays notes for the current user.
  * - Retrieves notes from Firebase based on the user's UID.
@@ -583,11 +570,9 @@ document.addEventListener("DOMContentLoaded", () => {
 toggleFormBtn.addEventListener("click", () => {
   if (formContainer.style.display === "none" || !formContainer.style.display) {
     formContainer.style.display = "block";
-    previewNote.style.display = "block";
     toggleFormBtn.innerText = "Hide Form";
   } else {
     formContainer.style.display = "none";
-    previewNote.style.display = "none";
     toggleFormBtn.innerText = "Add a Note";
   }
 });
@@ -596,5 +581,40 @@ toggleFormBtn.addEventListener("click", () => {
 // Initialize form visibility
 document.addEventListener("DOMContentLoaded", () => {
 formContainer.style.display = "none";
-previewNote.style.display = "none";
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  const togglePreviewBtn = document.getElementById("togglePreviewBtn");
+  const notePreview = document.getElementById("notePreview");
+
+  togglePreviewBtn.addEventListener("click", () => {
+    if (notePreview.style.display === "none") {
+      notePreview.style.display = "block";
+      togglePreviewBtn.innerText = "Hide Preview";
+    } else {
+      notePreview.style.display = "none";
+      togglePreviewBtn.innerText = "Click to Preview Your Note";
+    }
+  });
+
+  // Update the preview content dynamically as users type
+  recipientSearch.addEventListener("input", (e) => {
+    const recipientName = e.target.value.trim();
+    document.getElementById("previewRecipient").innerText = recipientName || "Recipient's Name";
+  });
+
+  messageInput.addEventListener("input", (e) => {
+    const message = e.target.value.trim();
+    document.getElementById("previewMessage").innerText = message || "Your message will appear here.";
+  });
+
+  notesColorPicker.addEventListener("input", (e) => {
+    const selectedColor = e.target.value;
+    notePreview.style.backgroundColor = selectedColor;
+  });
+
+  textColorPicker.addEventListener("input", (e) => {
+    const selectedColor = e.target.value;
+    notePreview.style.color = selectedColor;
+  });
 });

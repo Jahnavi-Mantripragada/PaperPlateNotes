@@ -277,3 +277,72 @@ header {
 .font-size-container{
   position: relative;
 }
+
+.preview-container {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.preview-btn {
+  background-color: #ff6f61;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+}
+
+.preview-btn:hover {
+  background-color: #ff4500;
+  transform: translateY(-2px);
+  box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+.note-preview {
+  margin: 10px auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #ffefc1; /* Default note background */
+  color: #000; /* Default text color */
+  text-align: center;
+  font-family: Arial, sans-serif; /* Default font */
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  max-width: 600px;
+  display: none; /* Hidden by default */
+}
+
+.preview-recipient {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.preview-message {
+  font-size: 16px;
+}
+
+footer {
+  background-color: #ff6f61; /* Matches the header color */
+  color: white;
+  text-align: center;
+  padding: 15px 0;
+  font-size: 14px;
+  border-top: 2px solid #e65b55; /* Optional: adds a slight border at the top */
+  position: fixed; /* Sticks the footer to the bottom */
+  width: 100%;
+  bottom: 0;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow */
+}
+
+footer a {
+  color: white;
+  text-decoration: underline;
+}
+
+footer a:hover {
+  color: #ffe6e3;
+  text-decoration: none;
+}
