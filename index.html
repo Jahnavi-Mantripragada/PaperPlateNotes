@@ -31,14 +31,16 @@
   <main>
     <button id="toggleFormBtn">Add a Note</button>
     <div id="form-container" class="collapsed">
-      <label for="recipient">Recipient's Name:</label>
-      <input
-        type="text"
-        id="recipientSearch"
-        placeholder="Type to search for a recipient"
-        autocomplete="off"
-      />
-      <ul id="recipientSuggestions" style="display: none;"></ul>
+      <div class="recipient-parent-container">
+        <label for="recipient">Recipient's Name:</label>
+        <input
+          type="text"
+          id="recipientSearch"
+          placeholder="Type to search for a recipient"
+          autocomplete="off"
+        />
+        <ul id="recipientSuggestions" style="display: none;"></ul>
+      </div>
       <textarea id="message" placeholder="Write your note"></textarea>
       <div class="picker-container">
       <label for="fontPicker">Choose Font:</label>
@@ -90,7 +92,7 @@
           <input type="range" id="textBlueSlider" min="0" max="255" value="0">
         </div>
       </div>
-      
+
       <input type="text" id="music" placeholder="Add a song link (optional, but highly recommended!)">
       <button id="addNoteBtn">Add Note</button>
     </div>
