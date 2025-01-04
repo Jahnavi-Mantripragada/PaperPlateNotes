@@ -53,16 +53,17 @@
         <option value="Georgia" style="font-family: Georgia;">Georgia</option>
       </select>
       </div>  
-      <label for="fontSizePicker" class="picker-label">Font Size:</label>
-      <select id="fontSizePicker">
-        <option value="12px">Small</option>
-        <option value="16px" selected>Medium</option>
-        <option value="20px">Large</option>
-        <option value="24px">Extra Large</option>
-      </select>        
+      <div class="font-size-container">
+        <label for="fontSizePicker" class="picker-label">Font Size:</label>
+        <select id="fontSizePicker">
+          <option value="12px">Small</option>
+          <option value="16px" selected>Medium</option>
+          <option value="20px">Large</option>
+          <option value="24px">Extra Large</option>
+        </select> 
+      </div>       
 
       <div class="color-picker-container">
-        <label for="toggleBgSliders" class="color-helper-text">Set Background Color</label>
         <button id="toggleBgSliders" class="color-picker-label">
           <i class="fa fa-palette" aria-hidden="true"></i>
         </button>
@@ -75,10 +76,10 @@
           <label for="bgBlueSlider">Blue</label>
           <input type="range" id="bgBlueSlider" min="0" max="255" value="193">
         </div>
+        <label for="toggleBgSliders" class="color-helper-text">Set Background Color</label>
       </div>
       
       <div class="color-picker-container">
-        <label for="toggleTextSliders" class="color-helper-text">Set Text Color</label>
         <button id="toggleTextSliders" class="color-picker-label">
           <i class="fa fa-eyedropper" aria-hidden="true"></i>
         </button>
@@ -91,6 +92,7 @@
           <label for="textBlueSlider">Blue</label>
           <input type="range" id="textBlueSlider" min="0" max="255" value="0">
         </div>
+        <label for="toggleTextSliders" class="color-helper-text">Set Text Color</label>
       </div>
 
       <input type="text" id="music" placeholder="Add a song link (optional, but highly recommended!)">

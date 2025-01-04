@@ -274,3 +274,6 @@ header {
   background: #e65b55;
 }
 
+.font-size-container{
+  position: relative;
+}
