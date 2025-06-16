@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ff6f61">
   <title>Paper Plates</title>
   <link rel="stylesheet" href="./src/styles/styles.css">
   <link
@@ -64,35 +65,29 @@
       </div>       
 
       <div class="color-picker-container">
-        <button id="toggleBgSliders" class="color-picker-label">
-          <i class="fa fa-palette" aria-hidden="true"></i>
-        </button>
-        <div id="bgSliders" class="sliders-container">
-          <p class="color-helper-text">Adjust the background color sliders!</p>
-          <label for="bgRedSlider">Red</label>
-          <input type="range" id="bgRedSlider" min="0" max="255" value="255">
-          <label for="bgGreenSlider">Green</label>
-          <input type="range" id="bgGreenSlider" min="0" max="255" value="239">
-          <label for="bgBlueSlider">Blue</label>
-          <input type="range" id="bgBlueSlider" min="0" max="255" value="193">
+        <label class="color-picker-title">Choose Background Color</label>
+        <div id="bgColorOptions" class="color-options">
+          <button class="color-circle bg-color-option selected" data-color="#ffc0cb" style="background-color:#ffc0cb"></button>
+          <button class="color-circle bg-color-option" data-color="#fff39b" style="background-color:#fff39b"></button>
+          <button class="color-circle bg-color-option" data-color="#add8e6" style="background-color:#add8e6"></button>
+          <button class="color-circle bg-color-option" data-color="#e6e6fa" style="background-color:#e6e6fa"></button>
+          <button class="color-circle bg-color-option" data-color="#b2dfdb" style="background-color:#b2dfdb"></button>
+          <button class="color-circle bg-color-option" data-color="#ffb347" style="background-color:#ffb347"></button>
         </div>
-        <label for="toggleBgSliders" class="color-helper-text">Set Background Color</label>
+        <input type="hidden" id="notesColorPicker" value="#ffc0cb">
       </div>
-      
+
       <div class="color-picker-container">
-        <button id="toggleTextSliders" class="color-picker-label">
-          <i class="fa fa-eyedropper" aria-hidden="true"></i>
-        </button>
-        <div id="textSliders" class="sliders-container">
-          <p class="color-helper-text">Adjust the text color sliders!</p>
-          <label for="textRedSlider">Red</label>
-          <input type="range" id="textRedSlider" min="0" max="255" value="0">
-          <label for="textGreenSlider">Green</label>
-          <input type="range" id="textGreenSlider" min="0" max="255" value="0">
-          <label for="textBlueSlider">Blue</label>
-          <input type="range" id="textBlueSlider" min="0" max="255" value="0">
+        <label class="color-picker-title">Choose Text Color</label>
+        <div id="textColorOptions" class="color-options">
+          <button class="color-circle text-color-option" data-color="#ffc0cb" style="background-color:#ffc0cb"></button>
+          <button class="color-circle text-color-option" data-color="#fff39b" style="background-color:#fff39b"></button>
+          <button class="color-circle text-color-option" data-color="#add8e6" style="background-color:#add8e6"></button>
+          <button class="color-circle text-color-option" data-color="#e6e6fa" style="background-color:#e6e6fa"></button>
+          <button class="color-circle text-color-option selected" data-color="#b2dfdb" style="background-color:#b2dfdb"></button>
+          <button class="color-circle text-color-option" data-color="#ffb347" style="background-color:#ffb347"></button>
         </div>
-        <label for="toggleTextSliders" class="color-helper-text">Set Text Color</label>
+        <input type="hidden" id="textColorPicker" value="#b2dfdb">
       </div>
 
       <input type="text" id="music" placeholder="Add a song link (optional, but highly recommended!)">
