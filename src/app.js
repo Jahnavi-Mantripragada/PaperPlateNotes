@@ -19,17 +19,8 @@ const fontPicker = document.getElementById("fontPicker");
 const fontSizePicker = document.getElementById("fontSizePicker");
 const loadingSpinner = document.getElementById("loadingSpinner");
 
-const bgRedSlider = document.getElementById("bgRedSlider");
-const bgGreenSlider = document.getElementById("bgGreenSlider");
-const bgBlueSlider = document.getElementById("bgBlueSlider");
 const notesColorPicker = document.getElementById("notesColorPicker");
-const notesColorPickerLabel = document.querySelector('label[for="notesColorPicker"]');
-
-const textRedSlider = document.getElementById("textRedSlider");
-const textGreenSlider = document.getElementById("textGreenSlider");
-const textBlueSlider = document.getElementById("textBlueSlider");
 const textColorPicker = document.getElementById("textColorPicker");
-const textColorPickerLabel = document.querySelector('label[for="textColorPicker"]');
 
 // Firebase Google Sign-In Provider
 const provider = new GoogleAuthProvider();
@@ -411,61 +402,6 @@ messageInput.addEventListener("input", (e) => {
 });
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-  const toggleBgSliders = document.getElementById("toggleBgSliders");
-  const bgSliders = document.getElementById("bgSliders");
-  const toggleTextSliders = document.getElementById("toggleTextSliders");
-  const textSliders = document.getElementById("textSliders");
-
-  const updateBackgroundColor = () => {
-    const red = bgRedSlider.value;
-    const green = bgGreenSlider.value;
-    const blue = bgBlueSlider.value;
-    const rgbColor = `rgb(${red}, ${green}, ${blue})`;
-
-    toggleBgSliders.style.backgroundColor = rgbColor;
-    previewNote.style.backgroundColor = rgbColor;
-  };
-
-  const updateTextColor = () => {
-    const red = textRedSlider.value;
-    const green = textGreenSlider.value;
-    const blue = textBlueSlider.value;
-    const rgbColor = `rgb(${red}, ${green}, ${blue})`;
-
-    toggleTextSliders.style.backgroundColor = rgbColor;
-    previewNote.style.color = rgbColor;
-  };
-
-  // Add toggle functionality
-  toggleBgSliders.addEventListener("click", () => {
-    bgSliders.style.display =
-      bgSliders.style.display === "none" || !bgSliders.style.display
-        ? "block"
-        : "none";
-  });
-
-  toggleTextSliders.addEventListener("click", () => {
-    textSliders.style.display =
-      textSliders.style.display === "none" || !textSliders.style.display
-        ? "block"
-        : "none";
-  });
-
-  // Add color update functionality
-  bgRedSlider.addEventListener("input", updateBackgroundColor);
-  bgGreenSlider.addEventListener("input", updateBackgroundColor);
-  bgBlueSlider.addEventListener("input", updateBackgroundColor);
-  textRedSlider.addEventListener("input", updateTextColor);
-  textGreenSlider.addEventListener("input", updateTextColor);
-  textBlueSlider.addEventListener("input", updateTextColor);
-
-  // Initialize styles
-  bgSliders.style.display = "none";
-  textSliders.style.display = "none";
-  updateBackgroundColor();
-  updateTextColor();
-});
 
 
 
@@ -617,4 +553,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const selectedColor = e.target.value;
     notePreview.style.color = selectedColor;
   });
+});
+
+// Setup color circle pickers
+document.addEventListener("DOMContentLoaded", () => {
+  function setupColorOptions(selector, picker) {
+    const options = document.querySelectorAll(selector);
+    options.forEach((opt) => {
+      opt.addEventListener("click", () => {
+        options.forEach((o) => o.classList.remove("selected"));
+        opt.classList.add("selected");
+        picker.value = opt.dataset.color;
+        picker.dispatchEvent(new Event("input"));
+      });
+    });
+  }
+
+  setupColorOptions(".bg-color-option", notesColorPicker);
+  setupColorOptions(".text-color-option", textColorPicker);
 });
