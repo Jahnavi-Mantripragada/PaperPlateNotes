@@ -43,51 +43,73 @@
         <ul id="recipientSuggestions" style="display: none;"></ul>
       </div>
       <textarea id="message" placeholder="Write your note"></textarea>
-      <div class="picker-container">
-      <label for="fontPicker">Choose Font:</label>
-      <select id="fontPicker">
-        <option value="Arial" style="font-family: Arial;">Arial</option>
-        <option value="'Courier New', Courier" style="font-family: 'Courier New', Courier;">Courier New</option>
-        <option value="'Dancing Script', cursive" style="font-family: 'Dancing Script', cursive;">Dancing Script</option>
-        <option value="'Pacifico', cursive" style="font-family: 'Pacifico', cursive;">Pacifico</option>
-        <option value="'Great Vibes', cursive" style="font-family: 'Great Vibes', cursive;">Great Vibes</option>
-        <option value="Georgia" style="font-family: Georgia;">Georgia</option>
-      </select>
-      </div>  
-      <div class="font-size-container">
-        <label for="fontSizePicker" class="picker-label">Font Size:</label>
-        <select id="fontSizePicker">
-          <option value="12px">Small</option>
-          <option value="16px" selected>Medium</option>
-          <option value="20px">Large</option>
-          <option value="24px">Extra Large</option>
-        </select> 
-      </div>       
-
-      <div class="color-picker-container">
-        <label class="color-picker-title">Choose Background Color</label>
-        <div id="bgColorOptions" class="color-options">
-          <button class="color-circle bg-color-option selected" data-color="#ffc0cb" style="background-color:#ffc0cb"></button>
-          <button class="color-circle bg-color-option" data-color="#fff39b" style="background-color:#fff39b"></button>
-          <button class="color-circle bg-color-option" data-color="#add8e6" style="background-color:#add8e6"></button>
-          <button class="color-circle bg-color-option" data-color="#e6e6fa" style="background-color:#e6e6fa"></button>
-          <button class="color-circle bg-color-option" data-color="#b2dfdb" style="background-color:#b2dfdb"></button>
-          <button class="color-circle bg-color-option" data-color="#ffb347" style="background-color:#ffb347"></button>
+      <div id="themeSection" class="theme-section">
+        <label class="theme-title">Choose a Theme</label>
+        <div class="theme-options">
+          <button class="theme-card selected" data-bg="#ffffff" data-text="#000000" data-font="Arial, sans-serif" data-size="16px">
+            <span class="theme-sample" style="background-color:#ffffff;color:#000000;font-family:Arial;">Aa</span>
+            <span class="theme-name">Classic</span>
+          </button>
+          <button class="theme-card" data-bg="#ffe4e1" data-text="#b22222" data-font="'Great Vibes', cursive" data-size="18px">
+            <span class="theme-sample" style="background-color:#ffe4e1;color:#b22222;font-family:'Great Vibes',cursive;">Aa</span>
+            <span class="theme-name">Romantic</span>
+          </button>
+          <button class="theme-card" data-bg="#ffeb3b" data-text="#ff5722" data-font="'Comic Sans MS', cursive, sans-serif" data-size="18px">
+            <span class="theme-sample" style="background-color:#ffeb3b;color:#ff5722;font-family:'Comic Sans MS',cursive;">Aa</span>
+            <span class="theme-name">Playful</span>
+          </button>
+          <button class="theme-card" data-bg="#e0f7fa" data-text="#006064" data-font="Helvetica, sans-serif" data-size="16px">
+            <span class="theme-sample" style="background-color:#e0f7fa;color:#006064;font-family:Helvetica;">Aa</span>
+            <span class="theme-name">Modern</span>
+          </button>
         </div>
-        <input type="hidden" id="notesColorPicker" value="#ffc0cb">
       </div>
-
-      <div class="color-picker-container">
-        <label class="color-picker-title">Choose Text Color</label>
-        <div id="textColorOptions" class="color-options">
-          <button class="color-circle text-color-option" data-color="#ffc0cb" style="background-color:#ffc0cb"></button>
-          <button class="color-circle text-color-option" data-color="#fff39b" style="background-color:#fff39b"></button>
-          <button class="color-circle text-color-option" data-color="#add8e6" style="background-color:#add8e6"></button>
-          <button class="color-circle text-color-option" data-color="#e6e6fa" style="background-color:#e6e6fa"></button>
-          <button class="color-circle text-color-option selected" data-color="#b2dfdb" style="background-color:#b2dfdb"></button>
-          <button class="color-circle text-color-option" data-color="#ffb347" style="background-color:#ffb347"></button>
+      <button id="customizeBtn" class="customize-btn">Customize</button>
+      <div id="customizeSection" style="display:none;">
+        <div class="picker-container">
+          <label for="fontPicker">Choose Font:</label>
+          <select id="fontPicker">
+            <option value="Arial" style="font-family: Arial;">Arial</option>
+            <option value="'Courier New', Courier" style="font-family: 'Courier New', Courier;">Courier New</option>
+            <option value="'Dancing Script', cursive" style="font-family: 'Dancing Script', cursive;">Dancing Script</option>
+            <option value="'Pacifico', cursive" style="font-family: 'Pacifico', cursive;">Pacifico</option>
+            <option value="'Great Vibes', cursive" style="font-family: 'Great Vibes', cursive;">Great Vibes</option>
+            <option value="Georgia" style="font-family: Georgia;">Georgia</option>
+          </select>
         </div>
-        <input type="hidden" id="textColorPicker" value="#b2dfdb">
+        <div class="font-size-container">
+          <label for="fontSizePicker" class="picker-label">Font Size:</label>
+          <select id="fontSizePicker">
+            <option value="12px">Small</option>
+            <option value="16px" selected>Medium</option>
+            <option value="20px">Large</option>
+            <option value="24px">Extra Large</option>
+          </select>
+        </div>
+        <div class="color-picker-container">
+          <label class="color-picker-title">Choose Background Color</label>
+          <div id="bgColorOptions" class="color-options">
+            <button class="color-circle bg-color-option" data-color="#ffc0cb" style="background-color:#ffc0cb"></button>
+            <button class="color-circle bg-color-option" data-color="#fff39b" style="background-color:#fff39b"></button>
+            <button class="color-circle bg-color-option" data-color="#add8e6" style="background-color:#add8e6"></button>
+            <button class="color-circle bg-color-option" data-color="#e6e6fa" style="background-color:#e6e6fa"></button>
+            <button class="color-circle bg-color-option" data-color="#b2dfdb" style="background-color:#b2dfdb"></button>
+            <input type="color" id="bgCustomPicker" class="color-circle bg-color-option" />
+          </div>
+          <input type="hidden" id="notesColorPicker" value="#ffffff">
+        </div>
+        <div class="color-picker-container">
+          <label class="color-picker-title">Choose Text Color</label>
+          <div id="textColorOptions" class="color-options">
+            <button class="color-circle text-color-option" data-color="#ffc0cb" style="background-color:#ffc0cb"></button>
+            <button class="color-circle text-color-option" data-color="#fff39b" style="background-color:#fff39b"></button>
+            <button class="color-circle text-color-option" data-color="#add8e6" style="background-color:#add8e6"></button>
+            <button class="color-circle text-color-option" data-color="#e6e6fa" style="background-color:#e6e6fa"></button>
+            <button class="color-circle text-color-option" data-color="#b2dfdb" style="background-color:#b2dfdb"></button>
+            <input type="color" id="textCustomPicker" class="color-circle text-color-option" />
+          </div>
+          <input type="hidden" id="textColorPicker" value="#000000">
+        </div>
       </div>
 
       <input type="text" id="music" placeholder="Add a song link (optional, but highly recommended!)">

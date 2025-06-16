@@ -21,6 +21,12 @@ const loadingSpinner = document.getElementById("loadingSpinner");
 
 const notesColorPicker = document.getElementById("notesColorPicker");
 const textColorPicker = document.getElementById("textColorPicker");
+const recipientSearch = document.getElementById("recipientSearch");
+const themeCards = document.querySelectorAll(".theme-card");
+const customizeBtn = document.getElementById("customizeBtn");
+const customizeSection = document.getElementById("customizeSection");
+const bgCustomPicker = document.getElementById("bgCustomPicker");
+const textCustomPicker = document.getElementById("textCustomPicker");
 
 // Firebase Google Sign-In Provider
 const provider = new GoogleAuthProvider();
@@ -76,7 +82,6 @@ auth.onAuthStateChanged((user) => {
           console.log("Fetched recipient data:", recipient);
 
           // Populate recipient name
-          const recipientSearch = document.getElementById("recipientSearch");
           recipientSearch.value = recipient.name;
           recipientSearch.dataset.selectedUid = recipientUid;
           previewRecipient.textContent = recipient.name;
@@ -201,7 +206,6 @@ function updateUIForAnonymousUser() {
  * Updates Firebase dynamically and notifies the user.
  */
 document.addEventListener("DOMContentLoaded", () => {
-  const recipientSearch = document.getElementById("recipientSearch");
   recipientSuggestions.addEventListener("click", (event) => {
   const selectedText = event.target.textContent;
 
@@ -212,6 +216,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(() => {
           alert(`"${newRecipient}" has been added to the recipient list.`);
           recipientSuggestions.style.display = "none"; // Hide suggestions
+          updatePreview();
         })
         .catch((error) => {
           console.error("Error adding recipient:", error);
@@ -312,14 +317,14 @@ function resetForm() {
   recipientSearch.value = "";
   delete recipientSearch.dataset.selectedUid; // Clear stored UID
   messageInput.value = "";
-  notesColorPicker.value = "#ffc0cb";
-  textColorPicker.value = "#b2dfdb";
-  fontPicker.value = "'Arial', sans-serif";
+  notesColorPicker.value = "#ffffff";
+  textColorPicker.value = "#000000";
+  fontPicker.value = "Arial, sans-serif";
   fontSizePicker.value = "16px";
   musicInput.value = "";
 
-  previewNote.style.backgroundColor = "#ffc0cb";
-  previewNote.style.color = "#b2dfdb";
+  previewNote.style.backgroundColor = "#ffffff";
+  previewNote.style.color = "#000000";
   previewNote.style.fontFamily = "Arial";
   previewNote.style.fontSize = "16px";
   previewRecipient.textContent = "Recipient's Name";
@@ -328,18 +333,24 @@ function resetForm() {
   document.querySelectorAll(".bg-color-option").forEach((btn) =>
     btn.classList.remove("selected")
   );
-  const defaultBg = document.querySelector(
-    '.bg-color-option[data-color="#ffc0cb"]'
-  );
-  if (defaultBg) defaultBg.classList.add("selected");
-
   document.querySelectorAll(".text-color-option").forEach((btn) =>
     btn.classList.remove("selected")
   );
-  const defaultText = document.querySelector(
-    '.text-color-option[data-color="#b2dfdb"]'
-  );
-  if (defaultText) defaultText.classList.add("selected");
+}
+
+function updatePreview() {
+  previewRecipient.textContent =
+    recipientSearch.value.trim() || "Recipient's Name";
+  previewMessage.textContent =
+    messageInput.value.trim() || "Your message will appear here.";
+  notePreview.style.backgroundColor = notesColorPicker.value;
+  notePreview.style.color = textColorPicker.value;
+  notePreview.style.fontFamily = fontPicker.value;
+  notePreview.style.fontSize = fontSizePicker.value;
+
+  notePreview.classList.remove("fade-anim");
+  void notePreview.offsetWidth;
+  notePreview.classList.add("fade-anim");
 }
 
 /**
@@ -351,7 +362,6 @@ function resetForm() {
 
 // Recipient name input
 document.addEventListener("DOMContentLoaded", () => {
-  const recipientSearch = document.getElementById("recipientSearch");
 
   if (recipientSearch) {
     recipientSearch.addEventListener(
@@ -387,6 +397,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   recipientSearch.value = recipient.name; // Set name in input
                   recipientSearch.dataset.selectedUid = uid; // Store selected UID
                   recipientSuggestions.style.display = "none"; // Hide dropdown
+                  updatePreview();
                 });
                 recipientSuggestions.appendChild(li);
               });
@@ -549,26 +560,68 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Update the preview content dynamically as users type
-  recipientSearch.addEventListener("input", (e) => {
-    const recipientName = e.target.value.trim();
-    document.getElementById("previewRecipient").innerText = recipientName || "Recipient's Name";
+  recipientSearch.addEventListener("input", updatePreview);
+  messageInput.addEventListener("input", updatePreview);
+  notesColorPicker.addEventListener("input", updatePreview);
+  textColorPicker.addEventListener("input", updatePreview);
+  fontPicker.addEventListener("change", updatePreview);
+  fontSizePicker.addEventListener("change", updatePreview);
+});
+
+// Setup color circle pickers
+document.addEventListener("DOMContentLoaded", () => {
+  function setupColorOptions(selector, picker) {
+    const options = document.querySelectorAll(selector);
+    options.forEach((opt) => {
+      const type = opt.tagName.toLowerCase() === "input" ? "input" : "click";
+      opt.addEventListener(type, () => {
+        options.forEach((o) => o.classList.remove("selected"));
+        if (type === "click") opt.classList.add("selected");
+        picker.value = opt.dataset.color || opt.value;
+        updatePreview();
+      });
+    });
+  }
+
+  setupColorOptions(".bg-color-option", notesColorPicker);
+  setupColorOptions(".text-color-option", textColorPicker);
+  updatePreview();
+});
+
+// Theme selection and customize flow
+document.addEventListener("DOMContentLoaded", () => {
+  themeCards.forEach((card) => {
+    card.addEventListener("click", () => {
+      themeCards.forEach((c) => c.classList.remove("selected"));
+      card.classList.add("selected");
+      notesColorPicker.value = card.dataset.bg;
+      textColorPicker.value = card.dataset.text;
+      fontPicker.value = card.dataset.font;
+      fontSizePicker.value = card.dataset.size;
+      updatePreview();
+    });
   });
 
-  messageInput.addEventListener("input", (e) => {
-    const message = e.target.value.trim();
-    document.getElementById("previewMessage").innerText = message || "Your message will appear here.";
-  });
+  if (customizeBtn && customizeSection) {
+    customizeBtn.addEventListener("click", () => {
+      customizeSection.style.display = "block";
+      customizeBtn.style.display = "none";
+    });
+  }
 
-  notesColorPicker.addEventListener("input", (e) => {
-    const selectedColor = e.target.value;
-    notePreview.style.backgroundColor = selectedColor;
-  });
+  if (bgCustomPicker) {
+    bgCustomPicker.addEventListener("input", () => {
+      notesColorPicker.value = bgCustomPicker.value;
+      updatePreview();
+    });
+  }
 
-  textColorPicker.addEventListener("input", (e) => {
-    const selectedColor = e.target.value;
-    notePreview.style.color = selectedColor;
-  });
+  if (textCustomPicker) {
+    textCustomPicker.addEventListener("input", () => {
+      textColorPicker.value = textCustomPicker.value;
+      updatePreview();
+    });
+  }
 });
 
 // Setup color circle pickers
