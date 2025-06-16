@@ -553,12 +553,28 @@ formContainer.style.display = "none";
 document.addEventListener("DOMContentLoaded", () => {
   const togglePreviewBtn = document.getElementById("togglePreviewBtn");
 
+  function showNotePreview() {
+    notePreview.classList.remove("fade-exit");
+    notePreview.classList.add("fade-enter");
+    notePreview.style.display = "block";
+  }
+
+  function hideNotePreview() {
+    notePreview.classList.remove("fade-enter");
+    notePreview.classList.add("fade-exit");
+    notePreview.addEventListener(
+      "animationend",
+      () => (notePreview.style.display = "none"),
+      { once: true }
+    );
+  }
+
   togglePreviewBtn.addEventListener("click", () => {
     if (notePreview.style.display === "none") {
-      notePreview.style.display = "block";
+      showNotePreview();
       togglePreviewBtn.innerText = "Hide Preview";
     } else {
-      notePreview.style.display = "none";
+      hideNotePreview();
       togglePreviewBtn.innerText = "Click to Preview Your Note";
     }
   });
