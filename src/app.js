@@ -623,3 +623,21 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+// Setup color circle pickers
+document.addEventListener("DOMContentLoaded", () => {
+  function setupColorOptions(selector, picker) {
+    const options = document.querySelectorAll(selector);
+    options.forEach((opt) => {
+      opt.addEventListener("click", () => {
+        options.forEach((o) => o.classList.remove("selected"));
+        opt.classList.add("selected");
+        picker.value = opt.dataset.color;
+        picker.dispatchEvent(new Event("input"));
+      });
+    });
+  }
+
+  setupColorOptions(".bg-color-option", notesColorPicker);
+  setupColorOptions(".text-color-option", textColorPicker);
+});
