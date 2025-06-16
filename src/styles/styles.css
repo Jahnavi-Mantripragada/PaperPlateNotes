@@ -266,13 +266,21 @@ header {
 
 .color-options {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 5px;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+.color-options::-webkit-scrollbar {
+  display: none;
 }
 
 .color-circle {
-  width: 50px;
-  height: 50px;
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   border: 2px solid transparent;
   cursor: pointer;
