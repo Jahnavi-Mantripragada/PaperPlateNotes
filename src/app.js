@@ -312,18 +312,34 @@ function resetForm() {
   recipientSearch.value = "";
   delete recipientSearch.dataset.selectedUid; // Clear stored UID
   messageInput.value = "";
-  notesColorPicker.value = "#000000";
-  textColorPicker.value = "#ffffff";
+  notesColorPicker.value = "#ffc0cb";
+  textColorPicker.value = "#b2dfdb";
   fontPicker.value = "'Arial', sans-serif";
   fontSizePicker.value = "16px";
   musicInput.value = "";
 
-  previewNote.style.backgroundColor = "#000000";
-  previewNote.style.color = "#ffffff";
+  previewNote.style.backgroundColor = "#ffc0cb";
+  previewNote.style.color = "#b2dfdb";
   previewNote.style.fontFamily = "Arial";
   previewNote.style.fontSize = "16px";
   previewRecipient.textContent = "Recipient's Name";
   previewMessage.textContent = "Your message will appear here.";
+
+  document.querySelectorAll(".bg-color-option").forEach((btn) =>
+    btn.classList.remove("selected")
+  );
+  const defaultBg = document.querySelector(
+    '.bg-color-option[data-color="#ffc0cb"]'
+  );
+  if (defaultBg) defaultBg.classList.add("selected");
+
+  document.querySelectorAll(".text-color-option").forEach((btn) =>
+    btn.classList.remove("selected")
+  );
+  const defaultText = document.querySelector(
+    '.text-color-option[data-color="#b2dfdb"]'
+  );
+  if (defaultText) defaultText.classList.add("selected");
 }
 
 /**
