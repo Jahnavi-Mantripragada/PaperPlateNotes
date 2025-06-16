@@ -16,15 +16,15 @@
   <header>
     <h1>Paper Plates - Share Notes</h1>
   </header>
-  <div id="loginPrompt" style="display: none; text-align: center;">
+  <div id="loginPrompt" class="hidden text-center">
     <p>Wanna view your notes? Or get notes from your friends?</p>
     <button id="googleSignInBtn">
-      <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo" style="width: 20px; margin-right: 10px;" />
+      <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo" class="logo-icon" />
       Join with Google
     </button>
   </div>  
-  <button id="logoutBtn" style="display: none;">Logout</button>
-  <div id="shareLinkContainer" style="display: none;">
+  <button id="logoutBtn" class="hidden">Logout</button>
+  <div id="shareLinkContainer" class="share-container hidden">
     <p>Share this link with your friends to receive notes:</p>
     <input type="text" id="shareLink" readonly />
     <button id="copyLinkBtn">Copy Link</button>
@@ -40,7 +40,7 @@
           placeholder="Type to search for a recipient"
           autocomplete="off"
         />
-        <ul id="recipientSuggestions" style="display: none;"></ul>
+        <ul id="recipientSuggestions" class="hidden"></ul>
       </div>
       <textarea id="message" placeholder="Write your note"></textarea>
       <div id="themeSection" class="theme-section">
@@ -65,7 +65,7 @@
         </div>
       </div>
       <button id="customizeBtn" class="customize-btn">Customize</button>
-      <div id="customizeSection" style="display:none;">
+      <div id="customizeSection" class="hidden">
         <div class="picker-container">
           <label for="fontPicker">Choose Font:</label>
           <select id="fontPicker">
@@ -89,11 +89,11 @@
         <div class="color-picker-container">
           <label class="color-picker-title">Choose Background Color</label>
           <div id="bgColorOptions" class="color-options">
-            <button class="color-circle bg-color-option" data-color="#ffc0cb" style="background-color:#ffc0cb"></button>
-            <button class="color-circle bg-color-option" data-color="#fff39b" style="background-color:#fff39b"></button>
-            <button class="color-circle bg-color-option" data-color="#add8e6" style="background-color:#add8e6"></button>
-            <button class="color-circle bg-color-option" data-color="#e6e6fa" style="background-color:#e6e6fa"></button>
-            <button class="color-circle bg-color-option" data-color="#b2dfdb" style="background-color:#b2dfdb"></button>
+            <button class="color-circle bg-color-option" data-color="#ffc0cb"></button>
+            <button class="color-circle bg-color-option" data-color="#fff39b"></button>
+            <button class="color-circle bg-color-option" data-color="#add8e6"></button>
+            <button class="color-circle bg-color-option" data-color="#e6e6fa"></button>
+            <button class="color-circle bg-color-option" data-color="#b2dfdb"></button>
             <input type="color" id="bgCustomPicker" class="color-circle bg-color-option" />
           </div>
           <input type="hidden" id="notesColorPicker" value="#ffffff">
@@ -101,11 +101,11 @@
         <div class="color-picker-container">
           <label class="color-picker-title">Choose Text Color</label>
           <div id="textColorOptions" class="color-options">
-            <button class="color-circle text-color-option" data-color="#ffc0cb" style="background-color:#ffc0cb"></button>
-            <button class="color-circle text-color-option" data-color="#fff39b" style="background-color:#fff39b"></button>
-            <button class="color-circle text-color-option" data-color="#add8e6" style="background-color:#add8e6"></button>
-            <button class="color-circle text-color-option" data-color="#e6e6fa" style="background-color:#e6e6fa"></button>
-            <button class="color-circle text-color-option" data-color="#b2dfdb" style="background-color:#b2dfdb"></button>
+            <button class="color-circle text-color-option" data-color="#ffc0cb"></button>
+            <button class="color-circle text-color-option" data-color="#fff39b"></button>
+            <button class="color-circle text-color-option" data-color="#add8e6"></button>
+            <button class="color-circle text-color-option" data-color="#e6e6fa"></button>
+            <button class="color-circle text-color-option" data-color="#b2dfdb"></button>
             <input type="color" id="textCustomPicker" class="color-circle text-color-option" />
           </div>
           <input type="hidden" id="textColorPicker" value="#000000">
@@ -114,8 +114,8 @@
 
       <input type="text" id="music" placeholder="Add a song link (optional, but highly recommended!)">
       <div class="preview-container">
-        <button id="togglePreviewBtn" class="preview-btn btn-glow">Click to Preview Your Note</button>
-        <div id="notePreview" class="note-preview ink-spread" style="display: none;">
+        <button id="togglePreviewBtn" class="preview-btn">Click to Preview Your Note</button>
+        <div id="notePreview" class="note-preview hidden">
           <p class="preview-recipient" id="previewRecipient">Recipient's Name</p>
           <p class="preview-message" id="previewMessage">Your message will appear here.</p>
         </div>
@@ -123,8 +123,8 @@
       <button id="addNoteBtn" class="add-note-btn">Add Note</button>      
     </div>   
     <section id="plate">  
-      <div id="loadingSpinner" style="display: none; text-align: center; margin: 20px;">
-        <img src="/assets/Dual Ring@1x-1.0s-200px-200px.gif" alt="Loading..." style="width: 50px; height: 50px;">
+      <div id="loadingSpinner" class="spinner hidden">
+        <img src="/assets/Dual Ring@1x-1.0s-200px-200px.gif" alt="Loading..." class="spinner-img">
       </div> 
     </section>
   </main>
