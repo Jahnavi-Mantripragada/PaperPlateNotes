@@ -14,6 +14,10 @@ const musicInput = document.getElementById("music");
 const toggleFormBtn = document.getElementById("toggleFormBtn");
 const formContainer = document.getElementById("form-container");
 const previewNote = document.getElementById("previewNote");
+// Some parts of the code used `notePreview` while the HTML element is
+// actually `#notePreview`. Map both references to the same DOM element so
+// tests can reliably access it.
+const notePreview = document.getElementById("notePreview") || previewNote;
 const recipientsRef = ref(database, "recipients");
 const fontPicker = document.getElementById("fontPicker");
 const fontSizePicker = document.getElementById("fontSizePicker");
@@ -548,7 +552,6 @@ formContainer.style.display = "none";
 
 document.addEventListener("DOMContentLoaded", () => {
   const togglePreviewBtn = document.getElementById("togglePreviewBtn");
-  const notePreview = document.getElementById("notePreview");
 
   togglePreviewBtn.addEventListener("click", () => {
     if (notePreview.style.display === "none") {
@@ -641,3 +644,6 @@ document.addEventListener("DOMContentLoaded", () => {
   setupColorOptions(".bg-color-option", notesColorPicker);
   setupColorOptions(".text-color-option", textColorPicker);
 });
+
+// Export key functions for testing purposes
+export { resetForm, updatePreview, isValidURL };
