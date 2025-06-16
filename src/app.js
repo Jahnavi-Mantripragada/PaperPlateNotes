@@ -550,6 +550,22 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener("DOMContentLoaded", () => {
   const togglePreviewBtn = document.getElementById("togglePreviewBtn");
 
+  function showNotePreview() {
+    notePreview.classList.remove("fade-exit");
+    notePreview.classList.add("fade-enter");
+    notePreview.style.display = "block";
+  }
+
+  function hideNotePreview() {
+    notePreview.classList.remove("fade-enter");
+    notePreview.classList.add("fade-exit");
+    notePreview.addEventListener(
+      "animationend",
+      () => (notePreview.style.display = "none"),
+      { once: true }
+    );
+  }
+
   togglePreviewBtn.addEventListener("click", () => {
     notePreview.classList.toggle("hidden");
     togglePreviewBtn.innerText = notePreview.classList.contains("hidden")
