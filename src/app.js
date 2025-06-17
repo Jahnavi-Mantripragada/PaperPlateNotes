@@ -13,11 +13,7 @@ const messageInput = document.getElementById("message");
 const musicInput = document.getElementById("music");
 const toggleFormBtn = document.getElementById("toggleFormBtn");
 const formContainer = document.getElementById("form-container");
-const previewNote = document.getElementById("previewNote");
-// Some parts of the code used `notePreview` while the HTML element is
-// actually `#notePreview`. Map both references to the same DOM element so
-// tests can reliably access it.
-const notePreview = document.getElementById("notePreview") || previewNote;
+const notePreview = document.getElementById("notePreview");
 const recipientsRef = ref(database, "recipients");
 const fontPicker = document.getElementById("fontPicker");
 const fontSizePicker = document.getElementById("fontSizePicker");
@@ -327,10 +323,10 @@ function resetForm() {
   fontSizePicker.value = "16px";
   musicInput.value = "";
 
-  previewNote.style.backgroundColor = "#ffffff";
-  previewNote.style.color = "#000000";
-  previewNote.style.fontFamily = "Arial";
-  previewNote.style.fontSize = "16px";
+  notePreview.style.backgroundColor = "#ffffff";
+  notePreview.style.color = "#000000";
+  notePreview.style.fontFamily = "Arial";
+  notePreview.style.fontSize = "16px";
   previewRecipient.textContent = "Recipient's Name";
   previewMessage.textContent = "Your message will appear here.";
 
@@ -635,24 +631,6 @@ document.addEventListener("DOMContentLoaded", () => {
       updatePreview();
     });
   }
-});
-
-// Setup color circle pickers
-document.addEventListener("DOMContentLoaded", () => {
-  function setupColorOptions(selector, picker) {
-    const options = document.querySelectorAll(selector);
-    options.forEach((opt) => {
-      opt.addEventListener("click", () => {
-        options.forEach((o) => o.classList.remove("selected"));
-        opt.classList.add("selected");
-        picker.value = opt.dataset.color;
-        picker.dispatchEvent(new Event("input"));
-      });
-    });
-  }
-
-  setupColorOptions(".bg-color-option", notesColorPicker);
-  setupColorOptions(".text-color-option", textColorPicker);
 });
 
 // Export key functions for testing purposes
