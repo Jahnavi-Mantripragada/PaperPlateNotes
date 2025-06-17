@@ -13,7 +13,13 @@ const messageInput = document.getElementById("message");
 const musicInput = document.getElementById("music");
 const toggleFormBtn = document.getElementById("toggleFormBtn");
 const formContainer = document.getElementById("form-container");
-const previewNote = document.getElementById("previewNote");
+const previewNote =
+  document.getElementById("previewNote") ||
+  document.getElementById("notePreview");
+// Several spots in the code reference either `previewNote` or `notePreview`.
+// Normalize both names to point at the same DOM element so tests and
+// existing code remain compatible regardless of which ID is present.
+const notePreview = previewNote;
 const recipientsRef = ref(database, "recipients");
 const fontPicker = document.getElementById("fontPicker");
 const fontSizePicker = document.getElementById("fontSizePicker");
@@ -323,10 +329,10 @@ function resetForm() {
   fontSizePicker.value = "16px";
   musicInput.value = "";
 
-  previewNote.style.backgroundColor = "#ffffff";
-  previewNote.style.color = "#000000";
-  previewNote.style.fontFamily = "Arial";
-  previewNote.style.fontSize = "16px";
+  notePreview.style.backgroundColor = "#ffffff";
+  notePreview.style.color = "#000000";
+  notePreview.style.fontFamily = "Arial";
+  notePreview.style.fontSize = "16px";
   previewRecipient.textContent = "Recipient's Name";
   previewMessage.textContent = "Your message will appear here.";
 
@@ -548,7 +554,6 @@ formContainer.style.display = "none";
 
 document.addEventListener("DOMContentLoaded", () => {
   const togglePreviewBtn = document.getElementById("togglePreviewBtn");
-  const notePreview = document.getElementById("notePreview");
 
   togglePreviewBtn.addEventListener("click", () => {
     if (notePreview.style.display === "none") {
@@ -641,3 +646,6 @@ document.addEventListener("DOMContentLoaded", () => {
   setupColorOptions(".bg-color-option", notesColorPicker);
   setupColorOptions(".text-color-option", textColorPicker);
 });
+
+// Export key functions for testing purposes
+export { resetForm, updatePreview, isValidURL };
