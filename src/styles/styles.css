@@ -26,6 +26,11 @@
 .spinner img {
   width: var(--size-12);
   height: var(--size-12);
+/* Animation timing variables */
+:root {
+  --fast: 200ms;
+  --normal: 600ms;
+  --slow: 1.2s;
 }
 
 body {
@@ -487,4 +492,71 @@ footer a:hover {
   #plate {
     grid-template-columns: repeat(2, 1fr);
   }
+  
+/* Motion effects */
+.fade-enter {
+  opacity: 0;
+  animation: fadeIn var(--normal) ease forwards;
+}
+
+.fade-exit {
+  opacity: 1;
+  animation: fadeOut var(--normal) ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.ink-spread {
+  position: relative;
+  overflow: hidden;
+}
+
+.ink-spread::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background:
+    radial-gradient(circle, rgba(0, 0, 0, 0.2) 10%, transparent 10%)
+    center/5px 5px no-repeat;
+  transform: translate(-50%, -50%);
+  opacity: 0.3;
+  pointer-events: none;
+  animation: spread var(--slow) ease-out forwards;
+}
+
+@keyframes spread {
+  0% { width: 0; height: 0; opacity: 0.3; }
+  100% { width: 200%; height: 200%; opacity: 0; }
+}
+
+.btn-glow {
+  transition: box-shadow var(--fast) ease, transform var(--fast) ease;
+}
+
+.btn-glow:hover,
+.btn-glow:focus {
+  box-shadow: 0 0 10px rgba(255, 111, 97, 0.5),
+    0 0 20px rgba(255, 111, 97, 0.3);
+  transform: scale(1.02);
+}
+
+.note-preview {
+  transform-origin: top center;
+  animation: scaleFade var(--normal) ease forwards;
+}
+
+@keyframes scaleFade {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
 }
