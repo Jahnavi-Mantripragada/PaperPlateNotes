@@ -21,7 +21,6 @@ test("resets form inputs and preview", () => {
     <input id="textColorPicker" type="color" value="#654321" />
     <input id="music" />
     <div id="notePreview"></div>`;
-
   resetForm();
 
   const preview = document.getElementById("notePreview");
