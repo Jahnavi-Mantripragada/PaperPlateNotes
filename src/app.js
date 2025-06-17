@@ -13,11 +13,7 @@ const messageInput = document.getElementById("message");
 const musicInput = document.getElementById("music");
 const toggleFormBtn = document.getElementById("toggleFormBtn");
 const formContainer = document.getElementById("form-container");
-const previewNote = document.getElementById("previewNote");
-// Some parts of the code used `notePreview` while the HTML element is
-// actually `#notePreview`. Map both references to the same DOM element so
-// tests can reliably access it.
-const notePreview = document.getElementById("notePreview") || previewNote;
+const notePreview = document.getElementById("notePreview");
 const recipientsRef = ref(database, "recipients");
 const fontPicker = document.getElementById("fontPicker");
 const fontSizePicker = document.getElementById("fontSizePicker");
@@ -131,11 +127,11 @@ function updateUIAfterLogin(user) {
   console.log("User signed in:", user.displayName);
   const shareLink = `${window.location.origin}?uid=${user.uid}`;
   const shareLinkInput = document.getElementById("shareLink");
-  document.getElementById("shareLinkContainer").style.display = "block";
+  document.getElementById("shareLinkContainer").classList.remove("hidden");
   shareLinkInput.value = shareLink;
-  document.getElementById("loginPrompt").style.display = "none";
+  document.getElementById("loginPrompt").classList.add("hidden");
   const logoutBtn = document.getElementById("logoutBtn");
-  logoutBtn.style.display = "block"; // Show the logout button
+  logoutBtn.classList.remove("hidden");
   const copyLinkBtn = document.getElementById("copyLinkBtn");
 
   copyLinkBtn.addEventListener("click", () => {
@@ -201,8 +197,8 @@ document.getElementById("logoutBtn").addEventListener("click", () => {
  * Updates the UI for anonymous users.
  */
 function updateUIForAnonymousUser() {
-  document.getElementById("loginPrompt").style.display = "block";
-  document.getElementById("shareLinkContainer").style.display = "none";
+  document.getElementById("loginPrompt").classList.remove("hidden");
+  document.getElementById("shareLinkContainer").classList.add("hidden");
 }
 
 /**
@@ -327,10 +323,10 @@ function resetForm() {
   fontSizePicker.value = "16px";
   musicInput.value = "";
 
-  previewNote.style.backgroundColor = "#ffffff";
-  previewNote.style.color = "#000000";
-  previewNote.style.fontFamily = "Arial";
-  previewNote.style.fontSize = "16px";
+  notePreview.style.backgroundColor = "#ffffff";
+  notePreview.style.color = "#000000";
+  notePreview.style.fontFamily = "Arial";
+  notePreview.style.fontSize = "16px";
   previewRecipient.textContent = "Recipient's Name";
   previewMessage.textContent = "Your message will appear here.";
 
@@ -512,7 +508,7 @@ function showNotesUI(userId) {
  */
 function showSpinner() {
   if (loadingSpinner) {
-    loadingSpinner.style.display = "block";
+    loadingSpinner.classList.remove("hidden");
   } else {
     console.error("Loading spinner element not found in the DOM.");
   }
@@ -524,7 +520,7 @@ function showSpinner() {
  */
 function hideSpinner() {
   if (loadingSpinner) {
-    loadingSpinner.style.display = "none";
+    loadingSpinner.classList.add("hidden");
   } else {
     console.error("Loading spinner element not found in the DOM.");
   }
@@ -534,33 +530,27 @@ function hideSpinner() {
  * Toggles the visibility of the note submission form.
  */
 document.addEventListener("DOMContentLoaded", () => {
-toggleFormBtn.addEventListener("click", () => {
-  if (formContainer.style.display === "none" || !formContainer.style.display) {
-    formContainer.style.display = "block";
-    toggleFormBtn.innerText = "Hide Form";
-  } else {
-    formContainer.style.display = "none";
-    toggleFormBtn.innerText = "Add a Note";
-  }
-});
+  toggleFormBtn.addEventListener("click", () => {
+    formContainer.classList.toggle("hidden");
+    toggleFormBtn.innerText = formContainer.classList.contains("hidden")
+      ? "Add a Note"
+      : "Hide Form";
+  });
 });
 
 // Initialize form visibility
 document.addEventListener("DOMContentLoaded", () => {
-formContainer.style.display = "none";
+  formContainer.classList.add("hidden");
 });
 
 document.addEventListener("DOMContentLoaded", () => {
   const togglePreviewBtn = document.getElementById("togglePreviewBtn");
 
   togglePreviewBtn.addEventListener("click", () => {
-    if (notePreview.style.display === "none") {
-      notePreview.style.display = "block";
-      togglePreviewBtn.innerText = "Hide Preview";
-    } else {
-      notePreview.style.display = "none";
-      togglePreviewBtn.innerText = "Click to Preview Your Note";
-    }
+    notePreview.classList.toggle("hidden");
+    togglePreviewBtn.innerText = notePreview.classList.contains("hidden")
+      ? "Click to Preview Your Note"
+      : "Hide Preview";
   });
 
   recipientSearch.addEventListener("input", updatePreview);
@@ -607,8 +597,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (customizeBtn && customizeSection) {
     customizeBtn.addEventListener("click", () => {
-      customizeSection.style.display = "block";
-      customizeBtn.style.display = "none";
+      customizeSection.classList.remove("hidden");
+      customizeBtn.classList.add("hidden");
     });
   }
 
@@ -625,24 +615,6 @@ document.addEventListener("DOMContentLoaded", () => {
       updatePreview();
     });
   }
-});
-
-// Setup color circle pickers
-document.addEventListener("DOMContentLoaded", () => {
-  function setupColorOptions(selector, picker) {
-    const options = document.querySelectorAll(selector);
-    options.forEach((opt) => {
-      opt.addEventListener("click", () => {
-        options.forEach((o) => o.classList.remove("selected"));
-        opt.classList.add("selected");
-        picker.value = opt.dataset.color;
-        picker.dispatchEvent(new Event("input"));
-      });
-    });
-  }
-
-  setupColorOptions(".bg-color-option", notesColorPicker);
-  setupColorOptions(".text-color-option", textColorPicker);
 });
 
 // Export key functions for testing purposes

@@ -18,14 +18,14 @@ test("resets form inputs and preview", () => {
   <button id="addNoteBtn"></button>
   <textarea id="message"></textarea>
   <input id="notesColorPicker" type="color" />
-    `;
+  `;
 
   resetForm();
 
   expect(document.getElementById("recipientSearch").value).toBe("");
   expect(document.getElementById("message").value).toBe("");
   expect(document.getElementById("notesColorPicker").value).toBe("#000000");
-  expect(document.getElementById("previewNote").style.backgroundColor).toBe("rgb(0, 0, 0)");
+  expect(document.getElementById("notePreview").style.backgroundColor).toBe("rgb(0, 0, 0)");
 });
 
 beforeEach(() => {
@@ -41,7 +41,7 @@ beforeEach(() => {
       <div id="form-container"></div>
       <input id="recipientSearch" />
       <ul id="recipientSuggestions"></ul>
-      <div id="previewNote"></div>
+      <div id="notePreview"></div>
     `;
   });
   
