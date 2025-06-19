@@ -13,7 +13,13 @@ const messageInput = document.getElementById("message");
 const musicInput = document.getElementById("music");
 const toggleFormBtn = document.getElementById("toggleFormBtn");
 const formContainer = document.getElementById("form-container");
-const notePreview = document.getElementById("notePreview");
+const previewNote =
+  document.getElementById("previewNote") ||
+  document.getElementById("notePreview");
+// Several spots in the code reference either `previewNote` or `notePreview`.
+// Normalize both names to point at the same DOM element so tests and
+// existing code remain compatible regardless of which ID is present.
+const notePreview = previewNote;
 const recipientsRef = ref(database, "recipients");
 const fontPicker = document.getElementById("fontPicker");
 const fontSizePicker = document.getElementById("fontSizePicker");
@@ -546,22 +552,6 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener("DOMContentLoaded", () => {
   const togglePreviewBtn = document.getElementById("togglePreviewBtn");
 
-  function showNotePreview() {
-    notePreview.classList.remove("fade-exit");
-    notePreview.classList.add("fade-enter");
-    notePreview.style.display = "block";
-  }
-
-  function hideNotePreview() {
-    notePreview.classList.remove("fade-enter");
-    notePreview.classList.add("fade-exit");
-    notePreview.addEventListener(
-      "animationend",
-      () => (notePreview.style.display = "none"),
-      { once: true }
-    );
-  }
-
   togglePreviewBtn.addEventListener("click", () => {
     notePreview.classList.toggle("hidden");
     togglePreviewBtn.innerText = notePreview.classList.contains("hidden")
@@ -633,5 +623,22 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+// Setup color circle pickers
+document.addEventListener("DOMContentLoaded", () => {
+  function setupColorOptions(selector, picker) {
+    const options = document.querySelectorAll(selector);
+    options.forEach((opt) => {
+      opt.addEventListener("click", () => {
+        options.forEach((o) => o.classList.remove("selected"));
+        opt.classList.add("selected");
+        picker.value = opt.dataset.color;
+        picker.dispatchEvent(new Event("input"));
+      });
+    });
+  }
+
+  setupColorOptions(".bg-color-option", notesColorPicker);
+  setupColorOptions(".text-color-option", textColorPicker);
+});
 // Export key functions for testing purposes
 export { resetForm, updatePreview, isValidURL };
