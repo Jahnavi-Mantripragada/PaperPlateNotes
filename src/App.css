@@ -1,0 +1,17 @@
+.app svg {
+  width: 100%;
+  height: auto;
+}
+
+.tooltip {
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+.tooltip a {
+  color: #aee;
+  text-decoration: underline;
+}
