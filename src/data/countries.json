@@ -1,0 +1,5 @@
+[
+  { "name": "United States", "lat": 38, "lon": -97 },
+  { "name": "France", "lat": 46, "lon": 2 },
+  { "name": "Japan", "lat": 36, "lon": 138 }
+]
