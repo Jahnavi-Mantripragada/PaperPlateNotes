@@ -1,0 +1,18 @@
+[
+  {
+    "source": "United States",
+    "target": "France",
+    "color": "green",
+    "justification": "Allied relationship",
+    "links": ["https://example.com/us-france"],
+    "tags": ["allies"]
+  },
+  {
+    "source": "United States",
+    "target": "Japan",
+    "color": "red",
+    "justification": "Trade tension",
+    "links": ["https://example.com/us-japan"],
+    "tags": ["trade", "tension"]
+  }
+]
